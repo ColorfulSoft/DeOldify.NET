@@ -9,3 +9,9 @@
 * Run Compile.bat
 * The DeOldify.NET.exe file will appear in the Implementation\Release folder. The application is ready to work!
 * **Use!**
+
+# Examples
+
+![Example1](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Example1.jpg)
+
+![Example2](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Example2.jpg)
