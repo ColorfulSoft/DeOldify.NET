@@ -110,28 +110,18 @@ namespace ColorfulSoft.DeOldify
         }
 
         ///<summary>
-        /// Changes the image size using render scale table.
+        /// Changes the image size to 256 on the smaller side.
         ///</summary>
         ///<param name="bmp">Source.</param>
         public static Bitmap Resize(Bitmap bmp)
         {
-            int factor = 320;
-            var size = Math.Min(bmp.Width, bmp.Height);
-            if(size <= 256)
-            {
-                factor = 192;
-            }
-            if((size > 256) && (size <= 768))
-            {
-                factor = 256;
-            }
             if(bmp.Width > bmp.Height)
             {
-                return new Bitmap(bmp, (int)((float)factor / bmp.Height * bmp.Width), factor);
+                return new Bitmap(bmp, (int)(256f / bmp.Height * bmp.Width), 256);
             }
             else
             {
-                return new Bitmap(bmp, factor, (int)((float)factor / bmp.Width * bmp.Height));
+                return new Bitmap(bmp, 256, (int)(256f / bmp.Width * bmp.Height));
             }
         }
 
