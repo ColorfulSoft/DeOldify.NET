@@ -7,6 +7,8 @@ using System;
 namespace ColorfulSoft.DeOldify
 {
 
+    // Adapted from this: https://sourceforge.net/projects/csharp-half/
+
     ///<summary>Half to Float conversion.</summary>
     internal static class HalfHelper
     {
