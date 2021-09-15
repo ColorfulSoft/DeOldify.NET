@@ -154,7 +154,7 @@ namespace ColorfulSoft.DeOldify
                 {
                     Bt[j * K + k] = B[k * N + j];
                 }
-        		}
+            }
             Parallel.For(0, M, (int i) =>
             {
                 for(int j = 0; j < N; ++j)
