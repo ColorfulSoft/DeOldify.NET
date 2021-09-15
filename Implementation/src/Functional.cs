@@ -148,7 +148,7 @@ namespace ColorfulSoft.DeOldify
                                    int ldc)
         {
             var Bt = (float*)Marshal.AllocHGlobal(K * N * sizeof(float)).ToPointer();
-        		for(int j = 0; j < N; ++j)
+            for(int j = 0; j < N; ++j)
             {
                 for(int k = 0; k < K; ++k)
                 {
