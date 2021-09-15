@@ -82,6 +82,7 @@ namespace ColorfulSoft.DeOldify
             return x;
         }
 
+        // Based on this: https://habr.com/ru/post/448436/
         public static void im2col(float* src,
                                   int srcC,
                                   int srcH,
@@ -135,6 +136,7 @@ namespace ColorfulSoft.DeOldify
             }
         }
 
+        // Based on this: https://habr.com/ru/post/448436/
         public static void gemm_nn(int M,
                                    int N,
                                    int K,
@@ -168,6 +170,7 @@ namespace ColorfulSoft.DeOldify
             Marshal.FreeHGlobal((IntPtr)Bt);
         }
 
+        // Based on this: https://habr.com/ru/post/448436/
         public static Tensor Conv2d(Tensor x,
                                     Tensor weight,
                                     Tensor bias,
