@@ -10,6 +10,8 @@
 * The DeOldify.NET.exe file will appear in the Implementation\Release folder. The application is ready to work!
 * **Use!**
 
+![GUI](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Sample.jpg)
+
 # Examples
 
 ![Example1](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Example1.jpg)
