@@ -388,6 +388,7 @@ namespace ColorfulSoft.DeOldify
                 this.__StartButton.ShowProgress = false;
                 this.__StartButton.Click -= this.StopHandler;
                 this.__StartButton.Click += this.StartHandler;
+                GC.Collect();
             });
             this.__ColorizationThread.Start();
         }
