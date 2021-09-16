@@ -53,6 +53,20 @@ namespace ColorfulSoft.DeOldify
             }
         }
 
+        ~Tensor()
+        {
+            if((this.Data != null) && this.__DisposeData)
+            {
+                Marshal.FreeHGlobal((IntPtr)this.Data);
+                this.Data = null;
+            }
+            if(this.Shape != null)
+            {
+                Marshal.FreeHGlobal((IntPtr)this.Shape);
+                this.Shape = null;
+            }
+        }
+
         public Tensor Flat3d()
         {
             var t = new Tensor();
@@ -62,7 +76,7 @@ namespace ColorfulSoft.DeOldify
             t.Shape = (int*)Marshal.AllocHGlobal(sizeof(int) * 2).ToPointer();
             t.Shape[0] = this.Shape[0];
             t.Shape[1] = this.Shape[1] * this.Shape[2];
-            t.__DisposeData = false;
+            this.__DisposeData = false;
             return t;
         }
 
@@ -76,7 +90,7 @@ namespace ColorfulSoft.DeOldify
             t.Shape[0] = this.Shape[0];
             t.Shape[1] = h;
             t.Shape[2] = w;
-            t.__DisposeData = false;
+            this.__DisposeData = false;
             return t;
         }
 
