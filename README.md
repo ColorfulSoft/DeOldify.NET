@@ -17,3 +17,6 @@
 ![Example1](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Example1.jpg)
 
 ![Example2](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Example2.jpg)
+
+# Updates
+* [16.09.2021] - **Fixed a memory leak issue**
