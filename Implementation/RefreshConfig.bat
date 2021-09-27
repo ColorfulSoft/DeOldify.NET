@@ -23,4 +23,4 @@ set "RESOURCES=%SRC%\Resources"
 for /r %%F in (%RESOURCES%\*) do echo /resource:"%RESOURCES%\%%F" > %CONFIG%
 echo /resource:"%RESOURCES%\DeOldify.hmodel" > %CONFIG%
 
-for /r %%F in (%SRC%*) do echo "%SRC%\%%F" > %CONFIG%
+for /r %%F in (%SRC%\*) do echo "%SRC%\%%F" > %CONFIG%
