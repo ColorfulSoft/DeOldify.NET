@@ -1,8 +1,8 @@
 @echo off
 
 set "CONFIG=Windows.rsp"
-set "SRC=src\"
-set "RESOURCES=%SRC%Resources\"
+set "SRC=src"
+set "RESOURCES=%SRC%\Resources"
 
 (
   echo #*************************************************************************************************
@@ -21,6 +21,6 @@ set "RESOURCES=%SRC%Resources\"
 
 
 for /r %%F in (%RESOURCES%\*) do echo /resource:"%RESOURCES%\%%F" > %CONFIG%
-echo /resource:"src\Resources\DeOldify.hmodel" > %CONFIG%
+echo /resource:"%RESOURCES%\DeOldify.hmodel" > %CONFIG%
 
-for /r %%F in (%SRC*) do echo "%SRC%F" > %CONFIG%
+for /r %%F in (%SRC%*) do echo "%SRC%\%%F" > %CONFIG%
