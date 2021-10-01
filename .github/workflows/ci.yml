@@ -3,6 +3,7 @@ on:
   pull_request:
     branches: [ main ]
 
+jobs:
   lint:
     runs-on: ubuntu-latest
 
@@ -13,4 +14,4 @@ on:
         run: |
           npm install -g markdownlint-cli
           markdownlint *.md
- 
+
