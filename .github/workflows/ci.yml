@@ -32,3 +32,13 @@ jobs:
         run: |
           npm install -g markdownlint-cli
           markdownlint *.md
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: program
+
+      - name: CSharp Check
+        run: |
+          sudo apt-get install gendarme
+          gendarme -- *.exe
