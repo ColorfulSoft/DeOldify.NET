@@ -1,3 +1,4 @@
-MD "Release"
-C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe @"Windows.rsp"
-cmd.exe
+@echo off
+md "Release"
+csc.exe @"Windows.rsp"
+pause > nul
