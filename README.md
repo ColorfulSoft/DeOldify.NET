@@ -60,6 +60,8 @@ wget https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOl
 
 ![Linux GUI](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Sample.Linux.jpg)
 
+**_Please note, that DeOldify.NET using Mono is a bit slower, than using .NET Framework_**
+
 # Examples
 
 ![Example1](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Example1.jpg)
