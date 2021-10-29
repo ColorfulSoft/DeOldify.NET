@@ -1,5 +1,5 @@
 # DeOldify.NET
-*C# implementation of Jason Antic's DeOldify(https://github.com/jantic/DeOldify)*
+*C# implementation of Jason Antic's DeOldify(https://github.com/jantic/DeOldify)* **Only for photos for now!**
 
 # How to run
 
