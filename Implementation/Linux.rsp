@@ -2,6 +2,7 @@
 #* (C) ColorfulSoft corp., 2021. All Rights reserved.
 #*************************************************************************************************
 
+/define:Linux
 /unsafe
 /optimize
 /platform:anycpu
