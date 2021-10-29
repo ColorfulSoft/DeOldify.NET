@@ -67,5 +67,7 @@ wget https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOl
 ![Example2](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Example2.jpg)
 
 # Updates
+
+* [29.10.2021] - **Big refactoring and code clean up**
 * [29.10.2021] - **Linux support**
 * [16.09.2021] - **Fixed a memory leak issue**
