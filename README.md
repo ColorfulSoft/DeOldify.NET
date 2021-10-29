@@ -2,6 +2,8 @@
 *C# implementation of Jason Antic's DeOldify(https://github.com/jantic/DeOldify)*
 
 # How to run
+
+## On Windows 7, 8, 8.1, 10, 11
 * Make sure that .NET Framework 4.5 or higher is installed on your computer.
 * You can use any bit depth(x32 or x64), but on a 32-bit system you will not be able to process large images due to the limited amount of memory.
 * At least 3 GB of free RAM is required to run.
@@ -9,6 +11,17 @@
 * Run Compile.bat
 * The DeOldify.NET.exe file will appear in the Implementation\Release folder. The application is ready to work!
 * **Use!**
+
+## On Linux (Tested on Mint)
+* We recommend that the first step is to update everything. It may take time, but it's worth it:
+```
+sudo apt-get update
+sudo apt-get upgrade
+```
+* Install Mono:
+```
+sudo apt-get install mono-complete
+```
 
 ![GUI](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Sample.jpg)
 
