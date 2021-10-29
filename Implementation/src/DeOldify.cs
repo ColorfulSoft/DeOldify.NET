@@ -295,12 +295,12 @@ namespace ColorfulSoft.DeOldify
         ///<summary>
         /// Colorizes the image.
         ///</summary>
-        ///<param name="BW">Original B&W image.</param>
+        ///<param name="bw">Original B&W image.</param>
         ///<returns>Colorized image.</returns>
-        public static Bitmap Colorize(Bitmap BW)
+        public static Bitmap Colorize(Bitmap bw)
         {
             __Progress = 0f;
-            var x = Image2Tensor(Resize(BW));
+            var x = Image2Tensor(Resize(bw));
             // Net
             var x1 = Functional.ReLU_(
                 BatchNorm2d(
@@ -334,7 +334,7 @@ namespace ColorfulSoft.DeOldify
             y = Conv2d(y, "layers.11.0", Parameters, padding: 1);
             y = Functional.Sigmoid_(y);
             __Progress = 0f;
-            return Mux(BW, Tensor2Image(y));
+            return Mux(bw, Tensor2Image(y));
         }
 
         ///<summary>
