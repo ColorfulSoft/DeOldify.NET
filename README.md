@@ -5,11 +5,17 @@
 
 ## On Windows 7, 8, 8.1, 10, 11
 * Make sure that .NET Framework 4.5 or higher is installed on your computer.
+
 * You can use any bit depth(x32 or x64), but on a 32-bit system you will not be able to process large images due to the limited amount of memory.
+
 * At least 3 GB of free RAM is required to run.
+
 * Download and unpack the repository, then download DeOldify.hmodel from the releases(https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOldify.hmodel) and place it in Implementation\src\Resources.
+
 * Run Compile.bat
+
 * The DeOldify.NET.exe file will appear in the Implementation\Release folder. The application is ready to work!
+
 * **Use!**
 
 ![Windows GUI](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Sample.jpg)
@@ -24,6 +30,7 @@ sudo apt-get upgrade
 ```
 sudo apt-get install mono-complete
 ```
+
 * Download sources.
 <details>
 <summary>Using git and terminal</summary>
@@ -37,13 +44,21 @@ wget https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOl
 </details>
 <details>
 <summary>Using GUI</summary>
+
 * Download and unpack the repository.
+  
 * Download DeOldify.hmodel from the releases(https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOldify.hmodel) and place it in Implementation/src/Resources.
 </details>
+
 * Run Compile.sh
+
 * The DeOldify.NET.exe file will appear in the Implementation/Release folder. The application is ready to work!
+
 * Run application using "mono DeOldify.NET.exe" command in terminal or double click as in Windows.
+
 * **Use!**
+
+![Linux GUI](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Sample.Linux.jpg)
 
 # Examples
 
