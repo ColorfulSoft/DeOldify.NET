@@ -179,7 +179,7 @@ namespace ColorfulSoft.DeOldify
     }
 
     /// <summary>
-    /// Flat control button.
+    /// Flat button.
     /// </summary>
     public sealed class FlatButton : UserControl
     {
@@ -273,104 +273,169 @@ namespace ColorfulSoft.DeOldify
     public sealed class MainForm : Form
     {
 
+        /// <summary>
+        /// Form with general information about this project.
+        /// </summary>
         private HelpForm __HelpForm;
 
+        /// <summary>
+        /// Button to open HelpForm.
+        /// </summary>
         private FlatButton __HelpButton;
 
+        /// <summary>
+        /// Contains input controls.
+        /// </summary>
         private GroupBox __InputBox;
 
+        /// <summary>
+        /// Input image picture box.
+        /// </summary>
         private PictureBox __InputImage;
 
+        /// <summary>
+        /// Input image.
+        /// </summary>
         private Bitmap __Input;
 
+        /// <summary>
+        /// Normal input image.
+        /// </summary>
         private Bitmap __NormalInput;
 
+        /// <summary>
+        /// Blurrified input image.
+        /// </summary>
         private Bitmap __BlurryInput;
 
+        /// <summary>
+        /// Button to open input image.
+        /// </summary>
         private FlatButton __OpenInput;
 
+        /// <summary>
+        /// Contains output controls.
+        /// </summary>
         private GroupBox __OutputBox;
 
+        /// <summary>
+        /// Output image picture box.
+        /// </summary>
         private PictureBox __OutputImage;
 
+        /// <summary>
+        /// Output image.
+        /// </summary>
         private Bitmap __Output;
 
+        /// <summary>
+        /// Normal output image.
+        /// </summary>
         private Bitmap __NormalOutput;
 
+        /// <summary>
+        /// Blurrified output image.
+        /// </summary>
         private Bitmap __BlurryOutput;
 
+        /// <summary>
+        /// Button to save output image.
+        /// </summary>
         private FlatButton __SaveOutput;
 
+        /// <summary>
+        /// ColorfulSoft's logo.
+        /// </summary>
         private Bitmap __ColorfulSoftLogo;
 
+        /// <summary>
+        /// Button to start, stop and control colorization.
+        /// </summary>
         private StartButton __StartButton;
 
+        /// <summary>
+        /// Thread for neural network.
+        /// </summary>
         private Thread __ColorizationThread;
 
-        private static Bitmap __Blurify(Bitmap Source)
+        /// <summary>
+        /// Blurrifies the image.
+        /// </summary>
+        /// <param name="source">Input image.</param>
+        /// <returns>Blurrified image.</returns>
+        private static Bitmap __Blurify(Bitmap source)
         {
-            var Output = new Bitmap(Source.Width, Source.Height);
-            for(int y = 0; y < Output.Height; ++y)
+            var output = new Bitmap(source.Width, source.Height);
+            for(int y = 0; y < output.Height; ++y)
             {
-                for(int x = 0; x < Output.Width; ++x)
+                for(int x = 0; x < output.Width; ++x)
                 {
-                    var A = 0f;
-                    var R = 0f;
-                    var G = 0f;
-                    var B = 0f;
+                    var a = 0f;
+                    var r = 0f;
+                    var g = 0f;
+                    var b = 0f;
                     for(int ky = 0; ky < 5; ++ky)
                     {
                         var iy = y + ky - 2;
-                        if((iy < 0) || (iy >= Source.Height))
+                        if((iy < 0) || (iy >= source.Height))
                         {
                             continue;
                         }
                         for(int kx = 0; kx < 5; ++kx)
                         {
                             var ix = x + kx - 2;
-                            if((ix < 0) || (ix >= Source.Width))
+                            if((ix < 0) || (ix >= source.Width))
                             {
                                 continue;
                             }
-                            var C = Source.GetPixel(ix, iy);
-                            A += C.A;
-                            R += C.R;
-                            G += C.G;
-                            B += C.B;
+                            var c = source.GetPixel(ix, iy);
+                            a += c.A;
+                            r += c.R;
+                            g += c.G;
+                            b += c.B;
                         }
                     }
-                    Output.SetPixel(x, y, Color.FromArgb((byte)(A / 25), (byte)(R / 25), (byte)(G / 25), (byte)(B / 25)));
+                    output.SetPixel(x, y, Color.FromArgb((byte)(a / 25), (byte)(r / 25), (byte)(g / 25), (byte)(b / 25)));
                 }
             }
-            return Output;
+            return output;
         }
 
-        private static Bitmap __Decolorize(Bitmap Source)
+        /// <summary>
+        /// Converts the image to greyscale.
+        /// </summary>
+        /// <param name="source">Input image.</param>
+        /// <returns>Greyscale image.</returns>
+        private static Bitmap __Decolorize(Bitmap source)
         {
-            var Result = new Bitmap(Source);
-            for(int y = 0; y < Result.Height; ++y)
+            var result = new Bitmap(source);
+            for(int y = 0; y < result.Height; ++y)
             {
-                for(int x = 0; x < Result.Width; ++x)
+                for(int x = 0; x < result.Width; ++x)
                 {
-                    var C = Result.GetPixel(x, y);
-                    var L = (byte)((C.R + C.G + C.B) / 3);
-                    Result.SetPixel(x, y, Color.FromArgb(C.A, L, L, L));
+                    var c = result.GetPixel(x, y);
+                    var l = (byte)((c.R + c.G + c.B) / 3);
+                    result.SetPixel(x, y, Color.FromArgb(c.A, l, l, l));
                 }
             }
-            return Result;
+            return result;
         }
 
-        private void __SetInputImage(Bitmap Source)
+        /// <summary>
+        /// Sets the input image.
+        /// </summary>
+        /// <param name="source">Input image.</param>
+        private void __SetInputImage(Bitmap source)
         {
-            Source = __Decolorize(Source);
-            this.__Input = Source;
-            if(Source.Height > Source.Width)
+            source = __Decolorize(source);
+            this.__Input = source;
+            if(source.Height > source.Width)
             {
-                this.__InputImage.Image = new Bitmap(Source, (int)(256f / Source.Height * Source.Width), 256);
+                this.__InputImage.Image = new Bitmap(source, (int)(256f / source.Height * source.Width), 256);
             }
             else
             {
-                this.__InputImage.Image = new Bitmap(Source, 256, (int)(256f / Source.Width * Source.Height));
+                this.__InputImage.Image = new Bitmap(source, 256, (int)(256f / source.Width * source.Height));
             }
             this.__NormalInput = (Bitmap)this.__InputImage.Image;
             this.__BlurryInput = __Blurify((Bitmap)this.__InputImage.Image);
@@ -390,33 +455,47 @@ namespace ColorfulSoft.DeOldify
             }
         }
 
-        private void __SetOutputImage(Bitmap Source)
+        /// <summary>
+        /// Sets output image.
+        /// </summary>
+        /// <param name="source">Output image.</param>
+        private void __SetOutputImage(Bitmap source)
         {
-            this.__Output = Source;
-            if(Source.Height > Source.Width)
+            this.__Output = source;
+            if(source.Height > source.Width)
             {
-                this.__OutputImage.Image = new Bitmap(Source, (int)(256f / Source.Height * Source.Width), 256);
+                this.__OutputImage.Image = new Bitmap(source, (int)(256f / source.Height * source.Width), 256);
             }
             else
             {
-                this.__OutputImage.Image = new Bitmap(Source, 256, (int)(256f / Source.Width * Source.Height));
+                this.__OutputImage.Image = new Bitmap(source, 256, (int)(256f / source.Width * source.Height));
             }
             this.__NormalOutput = (Bitmap)this.__OutputImage.Image;
             this.__BlurryOutput = __Blurify((Bitmap)this.__OutputImage.Image);
         }
 
+        /// <summary>
+        /// Stops the colorization process. Event Handler.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">Args.</param>
         private void StopHandler(object sender, EventArgs e)
         {
             this.__ColorizationThread.Abort();
             this.__StartButton.Text = "DeOldify!";
             this.__StartButton.Progress = 0f;
-            this.__StartButton.Click -= StopHandler;
-            this.__StartButton.Click += StartHandler;
+            this.__StartButton.Click -= this.StopHandler;
+            this.__StartButton.Click += this.StartHandler;
             this.__InputImage.Enabled = true;
             this.__OutputImage.Enabled = true;
             this.__StartButton.ShowProgress = false;
         }
 
+        /// <summary>
+        /// Starts the colorization process. Event handler.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">Args.</param>
         private void StartHandler(object sender, EventArgs e)
         {
             this.__InputImage.Enabled = false;
@@ -450,6 +529,9 @@ namespace ColorfulSoft.DeOldify
             this.__ColorizationThread.Start();
         }
 
+        /// <summary>
+        /// Initializes the main form.
+        /// </summary>
         public MainForm() : base()
         {
             this.Text = "DeOldify.NET";
