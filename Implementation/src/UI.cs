@@ -12,13 +12,25 @@ using System.Drawing.Imaging;
 namespace ColorfulSoft.DeOldify
 {
 
+    /// <summary>
+    /// A form with general information about the project.
+    /// </summary>
     public sealed class HelpForm : Form
     {
 
-        private PictureBox __Preview;
+        /// <summary>
+        /// Picture box for preview image
+        /// </summary>
+        private readonly PictureBox __Preview;
 
-        private Label __Text;
+        /// <summary>
+        /// Label with general information about DeOldify.NET.
+        /// </summary>
+        private readonly Label __Text;
 
+        /// <summary>
+        /// Creates the form.
+        /// </summary>
         public HelpForm() : base()
         {
             // this
@@ -51,11 +63,20 @@ namespace ColorfulSoft.DeOldify
 
     }
 
+    /// <summary>
+    /// Operation execution control button. Supports progress indication like ProgressBar.
+    /// </summary>
     public sealed class StartButton : UserControl
     {
 
+        /// <summary>
+        /// The graphical shell of the control.
+        /// </summary>
         private Graphics __Graphics;
 
+        /// <summary>
+        /// Redraws the control.
+        /// </summary>
         private void Redraw()
         {
             this.__Graphics.Clear(SystemColors.ControlDark);
@@ -69,8 +90,14 @@ namespace ColorfulSoft.DeOldify
             this.__Graphics.DrawString(txt, this.Font, SystemBrushes.ControlText, Math.Max((this.Width - txt.Length * this.Font.Size) / 2, 0), Math.Max((this.Height - this.Font.Height) / 2, 0));
         }
 
+        /// <summary>
+        /// Indicates whether the progress of the operation should be shown.
+        /// </summary>
         private bool __ShowProgress = false;
 
+        /// <summary>
+        /// Indicates whether the progress of the operation should be shown.
+        /// </summary>
         public bool ShowProgress
         {
 
@@ -87,6 +114,9 @@ namespace ColorfulSoft.DeOldify
 
         }
 
+        /// <summary>
+        /// Initializes the control.
+        /// </summary>
         public StartButton() : base()
         {
             this.__Graphics = this.CreateGraphics();
@@ -121,8 +151,14 @@ namespace ColorfulSoft.DeOldify
             };
         }
 
+        /// <summary>
+        /// Current progress of execution.
+        /// </summary>
         private float __Progress;
 
+        /// <summary>
+        /// Gets or sets the current progress of execution.
+        /// </summary>
         public float Progress
         {
             get
@@ -142,11 +178,20 @@ namespace ColorfulSoft.DeOldify
 
     }
 
+    /// <summary>
+    /// Flat control button.
+    /// </summary>
     public sealed class FlatButton : UserControl
     {
 
+        /// <summary>
+        /// Graphical shell of the control.
+        /// </summary>
         private Graphics __Graphics;
 
+        /// <summary>
+        /// Redraws the control.
+        /// </summary>
         private void Redraw()
         {
             this.__Graphics.Clear(SystemColors.ControlDark);
@@ -157,8 +202,14 @@ namespace ColorfulSoft.DeOldify
             }
         }
 
+        /// <summary>
+        /// Image on the button.
+        /// </summary>
         private Bitmap __Image;
 
+        /// <summary>
+        /// Image on the button.
+        /// </summary>
         public Bitmap Image
         {
 
@@ -175,6 +226,9 @@ namespace ColorfulSoft.DeOldify
 
         }
 
+        /// <summary>
+        /// Initializes the control.
+        /// </summary>
         public FlatButton() : base()
         {
             this.__Graphics = this.CreateGraphics();
@@ -213,6 +267,9 @@ namespace ColorfulSoft.DeOldify
 
     }
 
+    /// <summary>
+    /// The main form of the application.
+    /// </summary>
     public sealed class MainForm : Form
     {
 
@@ -444,7 +501,11 @@ namespace ColorfulSoft.DeOldify
               this.__InputImage.MouseEnter += delegate
               {
                   this.__InputImage.Image = this.__BlurryInput;
+                  #if Linux
+                  this.__InputImage.Controls.Add(this.__OpenInput);
+                  #else
                   this.__OpenInput.Show();
+                  #endif
               };
               this.__InputImage.MouseLeave += delegate
               {
@@ -455,7 +516,11 @@ namespace ColorfulSoft.DeOldify
                       this.__InputImage.Image = this.__BlurryInput;
                       return;
                   }
+                  #if Linux
+                  this.__InputImage.Controls.Remove(this.__OpenInput);
+                  #else
                   this.__OpenInput.Hide();
+                  #endif
               };
               this.__SetInputImage(new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("Input.jpg")));
               this.__InputBox.Controls.Add(this.__InputImage);
@@ -466,10 +531,13 @@ namespace ColorfulSoft.DeOldify
               this.__OpenInput.Left = 40;
               this.__OpenInput.Size = new Size(176, 25);
               this.__OpenInput.Text = "Open B&W image";
-              this.__OpenInput.Hide();
               this.__OpenInput.Click += delegate
               {
+                  #if Linux
+                  this.__InputImage.Controls.Remove(this.__OpenInput);
+                  #else
                   this.__OpenInput.Hide();
+                  #endif
                   var OFD = new OpenFileDialog();
                   OFD.Title = "Open";
                   OFD.Filter = "Images (*.bmp; *.emf; *.exif; *.gif; *.ico; *.jpg; *.png; *.tiff; *.wmf)|*.bmp; *.emf; *.exif; *.gif; *.ico; *.jpg; *.png; *.tiff; *.wmf|All files|*.*";
@@ -478,7 +546,11 @@ namespace ColorfulSoft.DeOldify
                       this.__SetInputImage(new Bitmap(OFD.FileName));
                   }
               };
+              #if Linux
+              #else
+              this.__OpenInput.Hide();
               this.__InputImage.Controls.Add(this.__OpenInput);
+              #endif
             this.Controls.Add(this.__InputBox);
             //-> __OutputBox
             this.__OutputBox = new GroupBox();
@@ -498,7 +570,11 @@ namespace ColorfulSoft.DeOldify
               this.__OutputImage.MouseEnter += delegate
               {
                   this.__OutputImage.Image = this.__BlurryOutput;
+                  #if Linux
+                  this.__OutputImage.Controls.Add(this.__SaveOutput);
+                  #else
                   this.__SaveOutput.Show();
+                  #endif
               };
               this.__OutputImage.MouseLeave += delegate
               {
@@ -509,7 +585,11 @@ namespace ColorfulSoft.DeOldify
                       this.__OutputImage.Image = this.__BlurryOutput;
                       return;
                   }
+                  #if Linux
+                  this.__OutputImage.Controls.Remove(this.__SaveOutput);
+                  #else
                   this.__SaveOutput.Hide();
+                  #endif
               };
               this.__SetOutputImage(new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("Output.jpg")));
               this.__OutputBox.Controls.Add(this.__OutputImage);
@@ -519,10 +599,13 @@ namespace ColorfulSoft.DeOldify
               this.__SaveOutput.Left = 40;
               this.__SaveOutput.Size = new Size(176, 25);
               this.__SaveOutput.Text = "Save";
-              this.__SaveOutput.Hide();
               this.__SaveOutput.Click += delegate
               {
+                  #if Linux
+                  this.__OutputImage.Controls.Remove(this.__SaveOutput);
+                  #else
                   this.__SaveOutput.Hide();
+                  #endif
                   var SFD = new SaveFileDialog();
                   SFD.Title = "Save colorized";
                   SFD.Filter = "Images (*.bmp)|*.bmp|Images (*.emf)|*.emf|Images (*.exif)|*.exif|Images (*.gif)|*.gif|Images (*.ico)|*.ico|Images (*.jpg)|*.jpg|Images (*.png)|*.png|Images (*.tiff)|*.tiff|Images (*.wmf)|*.wmf";
@@ -578,7 +661,11 @@ namespace ColorfulSoft.DeOldify
                       }
                   }
               };
+              #if Linux
+              #else
+              this.__SaveOutput.Hide();
               this.__OutputImage.Controls.Add(this.__SaveOutput);
+              #endif
             this.Controls.Add(this.__OutputBox);
             //
             this.__ColorfulSoftLogo = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ColorfulSoft.png"));
