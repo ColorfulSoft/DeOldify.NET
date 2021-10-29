@@ -9,9 +9,25 @@ using System.Runtime.InteropServices;
 namespace ColorfulSoft.DeOldify
 {
 
+    /// <summary>
+    /// Contains various operations on tensors.
+    /// </summary>
     internal static unsafe class Functional
     {
 
+        /// <summary>
+        /// Two-dimensional averaging pooling.
+        /// </summary>
+        /// <param name="x">Input data.</param>
+        /// <param name="kernelH">Kernel's height.</param>
+        /// <param name="kernelW">Kenrel's width</param>
+        /// <param name="strideY">Stride by "y".</param>
+        /// <param name="strideX">Stride by "x".</param>
+        /// <param name="paddingY">Padding by height.</param>
+        /// <param name="paddingX">Padding by width.</param>
+        /// <param name="dilationY">Dilation by height.</param>
+        /// <param name="dilationX">Dilation by width.</param>
+        /// <returns>Tensor.</returns>
         public static Tensor AvgPool2d(Tensor x,
                                        int kernelH,
                                        int kernelW,
@@ -65,6 +81,15 @@ namespace ColorfulSoft.DeOldify
             return y;
         }
 
+        /// <summary>
+        /// BatchNorm2d
+        /// </summary>
+        /// <param name="x">Input data.</param>
+        /// <param name="mean">Mean vector.</param>
+        /// <param name="var">Variance vector.</param>
+        /// <param name="weight">Weight vector.</param>
+        /// <param name="bias">Bias vector.</param>
+        /// <returns>Tensor.</returns>
         public static Tensor BatchNorm2d_(Tensor x, Tensor mean, Tensor @var, Tensor weight, Tensor bias)
         {
             var hw = x.Shape[1] * x.Shape[2];
@@ -83,6 +108,24 @@ namespace ColorfulSoft.DeOldify
         }
 
         // Improved version of this: https://habr.com/ru/post/448436/
+        /// <summary>
+        /// Converts input tensor to matrix view.
+        /// </summary>
+        /// <param name="src">Input tensor.</param>
+        /// <param name="srcC">Input's channels.</param>
+        /// <param name="srcH">Input's height.</param>
+        /// <param name="srcW">Input's width.</param>
+        /// <param name="kernelY">Kernel's height.</param>
+        /// <param name="kernelX">Kernel's width.</param>
+        /// <param name="dilationY">Dilation by height.</param>
+        /// <param name="dilationX">Dilation by width.</param>
+        /// <param name="strideY">Stride by height.</param>
+        /// <param name="strideX">Stride by width.</param>
+        /// <param name="padY">Padding by top side.</param>
+        /// <param name="padX">Padding by left side.</param>
+        /// <param name="padH">Padding by bottom side.</param>
+        /// <param name="padW">Padding by right side.</param>
+        /// <param name="buf">Buffer.</param>
         public static void im2col(float* src,
                                   int srcC,
                                   int srcH,
@@ -137,15 +180,21 @@ namespace ColorfulSoft.DeOldify
         }
 
         // Improved version of this: https://habr.com/ru/post/448436/
+        /// <summary>
+        /// Matrix multiplication.
+        /// </summary>
+        /// <param name="M">Size.</param>
+        /// <param name="N">Size.</param>
+        /// <param name="K">Size.</param>
+        /// <param name="A">Matrix A.</param>
+        /// <param name="B">Matrix B.</param>
+        /// <param name="C">Result.</param>
         public static void gemm_nn(int M,
                                    int N,
                                    int K,
                                    float* A,
-                                   int lda,
                                    float* B,
-                                   int ldb,
-                                   float* C,
-                                   int ldc)
+                                   float* C)
         {
             var Bt = (float*)Marshal.AllocHGlobal(K * N * sizeof(float)).ToPointer();
             for(int j = 0; j < N; ++j)
@@ -162,15 +211,31 @@ namespace ColorfulSoft.DeOldify
                     var sum = 0f;
                     for(int k = 0; k < K; ++k)
                     {
-                        sum += A[i * lda + k] * Bt[j * K + k];
+                        sum += A[i * K + k] * Bt[j * K + k];
                     }
-                    C[i * ldc + j] = sum;
+                    C[i * N + j] = sum;
                 }
             });
             Marshal.FreeHGlobal((IntPtr)Bt);
         }
 
         // Improved version of this: https://habr.com/ru/post/448436/
+        /// <summary>
+        /// Conv2d.
+        /// </summary>
+        /// <param name="x">Input tensor.</param>
+        /// <param name="weight">Weight.</param>
+        /// <param name="bias">Bias.</param>
+        /// <param name="padY">Padding by top side.</param>
+        /// <param name="padX">Padding by left side.</param>
+        /// <param name="padH">Padding by bottom side.</param>
+        /// <param name="padW">Padding by right side.</param>
+        /// <param name="strideY">Stride by "y".</param>
+        /// <param name="strideX">Stride by "x".</param>
+        /// <param name="dilationY">Stride by "y".</param>
+        /// <param name="dilationX">Stride by "x".</param>
+        /// <param name="group">Groups.</param>
+        /// <returns>Tensor.</returns>
         public static Tensor Conv2d(Tensor x,
                                     Tensor weight,
                                     Tensor bias,
@@ -204,7 +269,7 @@ namespace ColorfulSoft.DeOldify
             im2col(psrc, srcC, srcH, srcW, kernelY, kernelX, dilationY, dilationX, strideY, strideX, padY, padX, padH, padW, buf);
             for(int g = 0; g < group; ++g)
             {
-                gemm_nn(M, N, K, pweight + M * K * g, K, buf + N * K * g, N, pdst + M * N * g, N);
+                gemm_nn(M, N, K, pweight + M * K * g, buf + N * K * g, pdst + M * N * g);
             }
             if(bias != null)
             {
@@ -221,6 +286,12 @@ namespace ColorfulSoft.DeOldify
             return y;
         }
 
+        /// <summary>
+        /// Multiplies each element in tensor by specified scalar inplace.
+        /// </summary>
+        /// <param name="x">Input tensor.</param>
+        /// <param name="s">Scalar.</param>
+        /// <returns>Tensor.</returns>
         public static Tensor EltwiseMulScalar_(Tensor x, float s)
         {
             var px = x.Data;
@@ -231,6 +302,12 @@ namespace ColorfulSoft.DeOldify
             return x;
         }
 
+        /// <summary>
+        /// Matrix multiplication.
+        /// </summary>
+        /// <param name="a">Matrix A.</param>
+        /// <param name="b">Matrix B.</param>
+        /// <returns>Tensor.</returns>
         public static Tensor MatMul(Tensor a, Tensor b)
         {
             var aw = a.Shape[1];
@@ -260,6 +337,19 @@ namespace ColorfulSoft.DeOldify
             return c;
         }
 
+        /// <summary>
+        /// MaxPool2d.
+        /// </summary>
+        /// <param name="x">Input tensor.</param>
+        /// <param name="kernelH">Kernel's height.</param>
+        /// <param name="kernelW">Kernel's width.</param>
+        /// <param name="strideY">Stride by "y".</param>
+        /// <param name="strideX">Stride by "x".</param>
+        /// <param name="paddingY">Padding by "y".</param>
+        /// <param name="paddingX">Padding by "x".</param>
+        /// <param name="dilationY">Padding by "y".</param>
+        /// <param name="dilationX">Padding by "x".</param>
+        /// <returns>Tensor.</returns>
         public static Tensor MaxPool2d(Tensor x,
                                        int kernelH,
                                        int kernelW,
@@ -316,6 +406,11 @@ namespace ColorfulSoft.DeOldify
             return y;
         }
 
+        /// <summary>
+        /// PixelShuffle (scale_factor = 2).
+        /// </summary>
+        /// <param name="x">Input tensor.</param>
+        /// <returns>Tensor.</returns>
         public static Tensor PixelShuffle(Tensor x)
         {
             var x_depth = x.Shape[0];
@@ -346,6 +441,12 @@ namespace ColorfulSoft.DeOldify
             return y;
         }
 
+        /// <summary>
+        /// Inplace unsafe elementwise sum.
+        /// </summary>
+        /// <param name="a">Tensor A.</param>
+        /// <param name="b">Tensor B.</param>
+        /// <returns>Tensor.</returns>
         public static Tensor Plus_(Tensor a, Tensor b)
         {
             var pa = a.Data;
@@ -356,6 +457,11 @@ namespace ColorfulSoft.DeOldify
             return a;
         }
 
+        /// <summary>
+        /// Inplace relu.
+        /// </summary>
+        /// <param name="x">Input tensor.</param>
+        /// <returns>Tensor.</returns>
         public static Tensor ReLU_(Tensor x)
         {
             for(float* px = x.Data; px < (x.Data + x.Numel); ++px)
@@ -368,6 +474,13 @@ namespace ColorfulSoft.DeOldify
             return x;
         }
 
+        /// <summary>
+        /// Concatenation of two three-dimensional tensors in the zero dimension (in depth)
+        /// with the circumcision of the larger tensor.
+        /// </summary>
+        /// <param name="a">Tensor A.</param>
+        /// <param name="b">Tensor B.</param>
+        /// <returns>Tensor.</returns>
         public static Tensor RestrictedCat2d(Tensor a, Tensor b)
         {
             var height = Math.Min(a.Shape[1], b.Shape[1]);
@@ -401,6 +514,11 @@ namespace ColorfulSoft.DeOldify
             return c;
         }
 
+        /// <summary>
+        /// Inplace sigmoid.
+        /// </summary>
+        /// <param name="x">Input tensor.</param>
+        /// <returns>Tensor.</returns>
         public static Tensor Sigmoid_(Tensor x)
         {
             for(float* px = x.Data; px < x.Data + x.Numel; ++px)
@@ -410,11 +528,16 @@ namespace ColorfulSoft.DeOldify
             return x;
         }
 
+        /// <summary>
+        /// Two-dimentional softmax.
+        /// </summary>
+        /// <param name="input">Input tensor.</param>
+        /// <returns>Tensor.</returns>
         public static Tensor Softmax2d(Tensor input)
         {
-            var Result = new Tensor(input.Shape[0], input.Shape[1]);
+            var result = new Tensor(input.Shape[0], input.Shape[1]);
             var px = input.Data;
-            var py = Result.Data;
+            var py = result.Data;
             var height = input.Shape[0];
             var width = input.Shape[1];
             for(int y = 0; y < height; ++y)
@@ -440,7 +563,7 @@ namespace ColorfulSoft.DeOldify
                     py[y * width + x] = (float)(Math.Exp(v - amax) / sum);
                 }
             }
-            return Result;
+            return result;
         }
 
     }
