@@ -42,7 +42,7 @@ wget https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOl
 </details>
 * Run Compile.sh
 * The DeOldify.NET.exe file will appear in the Implementation/Release folder. The application is ready to work!
-* Run application using `mono DeOldify.NET.exe` or using double click as in Windows.
+* Run application using "mono DeOldify.NET.exe" command in terminal or double click as in Windows.
 * **Use!**
 
 # Examples
