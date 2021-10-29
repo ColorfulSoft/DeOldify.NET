@@ -12,6 +12,8 @@
 * The DeOldify.NET.exe file will appear in the Implementation\Release folder. The application is ready to work!
 * **Use!**
 
+![Windows GUI](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Sample.jpg)
+
 ## On Linux (Tested on Mint)
 * We recommend that the first step is to update everything. It may take time, but it's worth it:
 ```
@@ -22,8 +24,17 @@ sudo apt-get upgrade
 ```
 sudo apt-get install mono-complete
 ```
+* Download sources.
+<details>
+<summary>Using git and terminal</summary>
 
-![GUI](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Sample.jpg)
+```
+git clone https://github.com/ColorfulSoft/DeOldify.NET.git
+cd DeOldify.NET-main
+wget https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOldify.hmodel -O Implementation/src/Resources/DeOldify.hmodel
+```
+
+</details>
 
 # Examples
 
