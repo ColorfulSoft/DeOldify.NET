@@ -30,7 +30,7 @@ sudo apt-get install mono-complete
 
 ```
 git clone https://github.com/ColorfulSoft/DeOldify.NET.git
-cd DeOldify.NET-main
+cd DeOldify.NET
 wget https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOldify.hmodel -O Implementation/src/Resources/DeOldify.hmodel
 ```
 
