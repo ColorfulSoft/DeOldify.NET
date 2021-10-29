@@ -17,16 +17,17 @@ namespace ColorfulSoft.DeOldify
         ///<summary>
         /// Loads data from the stream using BinaryReader.
         ///</summary>
-        ///<param name="Reader">Source.</param>
-        ///<param name="Shape">Shape of the tensor.</param>
-        public unsafe static Tensor LoadTensor(BinaryReader Reader, params int[] Shape)
+        ///<param name="reader">Source.</param>
+        ///<param name="shape">Shape of the tensor.</param>
+        ///<returns>Tensor with data.</returns>
+        public unsafe static Tensor LoadTensor(BinaryReader reader, params int[] shape)
         {
-            var t = new Tensor(Shape);
+            var t = new Tensor(shape);
             var n = t.Numel;
-            var Container = t.Data;
+            var container = t.Data;
             for(int i = 0; i < n; ++i)
             {
-                Container[i] = HalfHelper.HalfToSingle(Reader.ReadUInt16());
+                container[i] = HalfHelper.HalfToSingle(reader.ReadUInt16());
             }
             return t;
         }
@@ -47,6 +48,7 @@ namespace ColorfulSoft.DeOldify
         /// Converts Bitmap to Tensor.
         ///</summary>
         ///<param name="bmp">Source.</param>
+        ///<returns>Tensor with pixels.</returns>
         public static Tensor Image2Tensor(Bitmap bmp)
         {
             var t = new Tensor(3, bmp.Height, bmp.Width);
@@ -55,11 +57,11 @@ namespace ColorfulSoft.DeOldify
             {
                 for(int x = 0; x < bmp.Width; ++x)
                 {
-                    var C = bmp.GetPixel(x, y);
-                    var L = (C.R + C.G + C.B) / 765f;
-                    pt[y * bmp.Width + x] = (L - 0.485f) / 0.229f;
-                    pt[(bmp.Height + y) * bmp.Width + x] = (L - 0.456f) / 0.224f;
-                    pt[(2 * bmp.Height + y) * bmp.Width + x] = (L - 0.406f) / 0.225f;
+                    var c = bmp.GetPixel(x, y);
+                    var l = (c.R + c.G + c.B) / 765f;
+                    pt[y * bmp.Width + x] = (l - 0.485f) / 0.229f;
+                    pt[(bmp.Height + y) * bmp.Width + x] = (l - 0.456f) / 0.224f;
+                    pt[(2 * bmp.Height + y) * bmp.Width + x] = (l - 0.406f) / 0.225f;
                 }
             }
             return t;
@@ -69,6 +71,7 @@ namespace ColorfulSoft.DeOldify
         /// Converts Tensor to Bitmap.
         ///</summary>
         ///<param name="t">Source.</param>
+        ///<returns>Bitmap with pixels from Tensor t.</returns>
         public static Bitmap Tensor2Image(Tensor t)
         {
             var bmp = new Bitmap(t.Shape[2], t.Shape[1]);
@@ -89,6 +92,7 @@ namespace ColorfulSoft.DeOldify
         ///</summary>
         ///<param name="full_size">Original B&W image.</param>
         ///<param name="colorized">Colorized image.</param>
+        ///<returns>HR bitmap with content from full_size and colors from colorized.</returns>
         public static Bitmap Mux(Bitmap full_size, Bitmap colorized)
         {
             var colorized_ = new Bitmap(colorized, full_size.Width, full_size.Height);
@@ -113,6 +117,7 @@ namespace ColorfulSoft.DeOldify
         /// Changes the image size to 256 on the smaller side.
         ///</summary>
         ///<param name="bmp">Source.</param>
+        ///<returns>Resized bitmap.</returns>
         public static Bitmap Resize(Bitmap bmp)
         {
             if(bmp.Width > bmp.Height)
@@ -133,6 +138,7 @@ namespace ColorfulSoft.DeOldify
         ///<param name="ckpt">State dict.</param>
         ///<param name="stride">Stride.</param>
         ///<param name="padding">Padding.</param>
+        ///<returns>Tensor.</returns>
         public static Tensor Conv2d(Tensor x, string layer, Dictionary<string, Tensor> ckpt, int stride = 1, int padding = 1)
         {
             var y = Functional.Conv2d(x, ckpt[layer + ".weight"], ckpt.ContainsKey(layer + ".bias") ? ckpt[layer + ".bias"] : null, padding, padding, padding, padding, stride, stride, 1, 1, 1);
@@ -150,6 +156,7 @@ namespace ColorfulSoft.DeOldify
         ///<param name="x">Source.</param>
         ///<param name="layer">Layer name.</param>
         ///<param name="ckpt">State dict.</param>
+        ///<returns>Tensor.</returns>
         public static Tensor BatchNorm2d(Tensor x, string layer, Dictionary<string, Tensor> ckpt)
         {
             return Functional.BatchNorm2d_(x, ckpt[layer + ".running_mean"], ckpt[layer + ".running_var"], ckpt[layer + ".weight"], ckpt[layer + ".bias"]);
@@ -162,6 +169,7 @@ namespace ColorfulSoft.DeOldify
         ///<param name="layer">Layer name.</param>
         ///<param name="ckpt">State dict.</param>
         ///<param name="strided">Is stride == 2?</param>
+        ///<returns>Tensor.</returns>
         public static Tensor BasicBlock(Tensor x, string layer, Dictionary<string, Tensor> ckpt, bool strided = false)
         {
             var @out = Conv2d(x, layer + ".conv1", ckpt, strided ? 2 : 1, 1);
@@ -182,6 +190,7 @@ namespace ColorfulSoft.DeOldify
         ///<param name="x">Source.</param>
         ///<param name="layer">Layer name.</param>
         ///<param name="ckpt">State dict.</param>
+        ///<returns>Tensor.</returns>
         public static Tensor MiddleBlock(Tensor x, string layer, Dictionary<string, Tensor> ckpt)
         {
             return BatchNorm2d(Functional.ReLU_(Conv2d(BatchNorm2d(Functional.ReLU_(Conv2d(x, layer + ".0.0", ckpt)), layer + ".0.2", ckpt), layer + ".1.0", ckpt)), layer + ".1.2", ckpt);
@@ -193,6 +202,7 @@ namespace ColorfulSoft.DeOldify
         ///<param name="x">Source.</param>
         ///<param name="layer">Layer name.</param>
         ///<param name="ckpt">State dict.</param>
+        ///<returns>Tensor.</returns>
         public static Tensor CustomPixelShuffle(Tensor x, string layer, Dictionary<string, Tensor> ckpt)
         {
             return Functional.AvgPool2d(Functional.PixelShuffle(Functional.ReLU_(BatchNorm2d(Conv2d(x, layer + ".conv.0", ckpt, padding: 0), layer + ".conv.1", ckpt))), 2, 2, 1, 1, 1, 1, 1, 1);
@@ -201,9 +211,11 @@ namespace ColorfulSoft.DeOldify
         ///<summary>
         /// Executes UnetBlockDeep of DeOldify with parameters from ckpt.
         ///</summary>
-        ///<param name="x">Source.</param>
+        ///<param name="up_in">Source.</param>
+        ///<param name="s">Source.</param>
         ///<param name="layer">Layer name.</param>
         ///<param name="ckpt">State dict.</param>
+        ///<returns>Tensor.</returns>
         public static Tensor UnetBlockDeep(Tensor up_in, Tensor s, string layer, Dictionary<string, Tensor> ckpt, bool self_attentional = false)
         {
             var up_out = CustomPixelShuffle(up_in, layer + ".shuf", ckpt);
@@ -212,10 +224,7 @@ namespace ColorfulSoft.DeOldify
             {
                 return SelfAttention(BatchNorm2d(Functional.ReLU_(Conv2d(BatchNorm2d(Functional.ReLU_(Conv2d(cat_x, layer + ".conv1.0", ckpt)), layer + ".conv1.2", ckpt), layer + ".conv2.0", ckpt)), layer + ".conv2.2", ckpt), layer + ".conv2.3", ckpt);
             }
-            else
-            {
-                return Functional.AvgPool2d(BatchNorm2d(Functional.ReLU_(Conv2d(BatchNorm2d(Functional.ReLU_(Conv2d(cat_x, layer + ".conv1.0", ckpt)), layer + ".conv1.2", ckpt), layer + ".conv2.0", ckpt)), layer + ".conv2.2", ckpt), 2, 2, 1, 1, 0, 0, 1, 1);
-            }
+            return Functional.AvgPool2d(BatchNorm2d(Functional.ReLU_(Conv2d(BatchNorm2d(Functional.ReLU_(Conv2d(cat_x, layer + ".conv1.0", ckpt)), layer + ".conv1.2", ckpt), layer + ".conv2.0", ckpt)), layer + ".conv2.2", ckpt), 2, 2, 1, 1, 0, 0, 1, 1);
         }
 
         ///<summary>
@@ -224,6 +233,7 @@ namespace ColorfulSoft.DeOldify
         ///<param name="x">Source.</param>
         ///<param name="layer">Layer name.</param>
         ///<param name="ckpt">State dict.</param>
+        ///<returns>Tensor.</returns>
         public static Tensor SelfAttention(Tensor x, string layer, Dictionary<string, Tensor> ckpt)
         {
             var gamma = ckpt[layer + ".gamma"].Data[0];
@@ -240,6 +250,7 @@ namespace ColorfulSoft.DeOldify
         ///<param name="x">Source.</param>
         ///<param name="layer">Layer name.</param>
         ///<param name="ckpt">State dict.</param>
+        ///<returns>Tensor.</returns>
         public static Tensor PixelShuffle(Tensor x, string layer, Dictionary<string, Tensor> ckpt)
         {
             return Functional.AvgPool2d(Functional.ReLU_(Functional.PixelShuffle(Conv2d(x, layer + ".conv.0", ckpt, padding: 0))), 2, 2, 1, 1, 1, 1, 1, 1);
@@ -251,6 +262,7 @@ namespace ColorfulSoft.DeOldify
         ///<param name="x">Source.</param>
         ///<param name="layer">Layer name.</param>
         ///<param name="ckpt">State dict.</param>
+        ///<returns>Tensor.</returns>
         public static Tensor ResBlock(Tensor x, string layer, Dictionary<string, Tensor> ckpt)
         {
             var @out = Conv2d(x, layer + ".layers.0.0", ckpt);
@@ -284,6 +296,7 @@ namespace ColorfulSoft.DeOldify
         /// Colorizes the image.
         ///</summary>
         ///<param name="BW">Original B&W image.</param>
+        ///<returns>Colorized image.</returns>
         public static Bitmap Colorize(Bitmap BW)
         {
             __Progress = 0f;
