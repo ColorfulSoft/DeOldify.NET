@@ -35,6 +35,15 @@ wget https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOl
 ```
 
 </details>
+<details>
+<summary>Using GUI</summary>
+* Download and unpack the repository.
+* Download DeOldify.hmodel from the releases(https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOldify.hmodel) and place it in Implementation/src/Resources.
+</details>
+* Run Compile.sh
+* The DeOldify.NET.exe file will appear in the Implementation/Release folder. The application is ready to work!
+* Run application using `mono DeOldify.NET.exe` or using double click as in Windows.
+* **Use!**
 
 # Examples
 
@@ -43,4 +52,5 @@ wget https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOl
 ![Example2](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Example2.jpg)
 
 # Updates
+* [29.10.2021] - **Linux support**
 * [16.09.2021] - **Fixed a memory leak issue**
