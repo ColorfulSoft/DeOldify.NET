@@ -8,30 +8,55 @@ using System.Runtime.InteropServices;
 namespace ColorfulSoft.DeOldify
 {
 
+    /// <summary>
+    /// Multidimentional array of floating point data type.
+    /// </summary>
     internal sealed unsafe class Tensor : IDisposable
     {
 
+        /// <summary>
+        /// Data.
+        /// </summary>
         public float* Data;
 
+        /// <summary>
+        /// Should destructor free Data?
+        /// </summary>
         private bool __DisposeData = true;
 
+        /// <summary>
+        /// Shape.
+        /// </summary>
         public int* Shape;
 
+        /// <summary>
+        /// Number of elements.
+        /// </summary>
         public int Numel;
 
+        /// <summary>
+        /// Number of dimentions.
+        /// </summary>
         public int Ndim;
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public Tensor()
         {
         }
 
-        public Tensor(params int[] Shape)
+        /// <summary>
+        /// Initializes the tensor with specified shape.
+        /// </summary>
+        /// <param name="shape">Shape.</param>
+        public Tensor(params int[] shape)
         {
-            this.Ndim = Shape.Length;
+            this.Ndim = shape.Length;
             this.Numel = 1;
             this.Shape = (int*)Marshal.AllocHGlobal(sizeof(int) * this.Ndim).ToPointer();
             var Pshape = this.Shape;
-            foreach(var Dim in Shape)
+            foreach(var Dim in shape)
             {
                 this.Numel *= Dim;
                 *Pshape++ = Dim;
@@ -39,6 +64,9 @@ namespace ColorfulSoft.DeOldify
             this.Data = (float*)Marshal.AllocHGlobal(sizeof(float) * this.Numel).ToPointer();
         }
 
+        /// <summary>
+        /// Disposes unmanaged resources of the tensor.
+        /// </summary>
         void IDisposable.Dispose()
         {
             if((this.Data != null) && this.__DisposeData)
@@ -53,6 +81,9 @@ namespace ColorfulSoft.DeOldify
             }
         }
 
+        /// <summary>
+        /// Disposes unmanaged resources of the tensor.
+        /// </summary>
         ~Tensor()
         {
             if((this.Data != null) && this.__DisposeData)
@@ -67,6 +98,10 @@ namespace ColorfulSoft.DeOldify
             }
         }
 
+        /// <summary>
+        /// Flattens 3d tensor to 2d.
+        /// </summary>
+        /// <returns>Tensor.</returns>
         public Tensor Flat3d()
         {
             var t = new Tensor();
@@ -80,6 +115,12 @@ namespace ColorfulSoft.DeOldify
             return t;
         }
 
+        /// <summary>
+        /// Unflats the 2d tensor to 3d using specified size.
+        /// </summary>
+        /// <param name="h">Height.</param>
+        /// <param name="w">Width.</param>
+        /// <returns>Tensor.</returns>
         public Tensor Unflat3d(int h, int w)
         {
             var t = new Tensor();
@@ -94,6 +135,10 @@ namespace ColorfulSoft.DeOldify
             return t;
         }
 
+        /// <summary>
+        /// Returns transposed version of this tensor.
+        /// </summary>
+        /// <returns>Tensor.</returns>
         public Tensor Transpose2d()
         {
             var t = new Tensor(this.Shape[1], this.Shape[0]);
