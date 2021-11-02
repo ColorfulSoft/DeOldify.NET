@@ -22,7 +22,13 @@ namespace ColorfulSoft.DeOldify
         {
             DeOldify.Initialize();
             Application.EnableVisualStyles();
-            Application.Run(new MainForm());
+            try
+            {
+                Application.Run(new MainForm());
+            }
+            catch
+            {
+            }
         }
 
     }
