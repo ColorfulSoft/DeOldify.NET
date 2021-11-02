@@ -50,7 +50,7 @@ wget https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOl
 * Download DeOldify.hmodel from the releases(https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOldify.hmodel) and place it in Implementation/src/Resources.
 </details>
 
-* Run Compile.sh
+* Run Compile.sh `$bash Compile.bat`
 
 * The DeOldify.NET.exe file will appear in the Implementation/Release folder. The application is ready to work!
 
