@@ -534,7 +534,7 @@ namespace ColorfulSoft.DeOldify
         /// </summary>
         public MainForm() : base()
         {
-            this.Text = "DeOldify.NET";
+            this.Text = "DeOldify.NET v1.0";
             this.Icon = Icon.FromHandle((new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("Icon.png"))).GetHicon());
             this.BackColor = SystemColors.ControlDarkDark;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
