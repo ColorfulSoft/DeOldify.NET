@@ -14,7 +14,7 @@
 
 * Run Compile.bat
 
-* The DeOldify.NET.exe file will appear in the Implementation\Release folder. The application is ready to work!
+* The DeOldify.NET.win.exe file will appear in the Implementation\Release folder. The application is ready to work!
 
 * **Use!**
 
@@ -52,7 +52,7 @@ wget https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOl
 
 * Run Compile.sh `bash Compile.sh`
 
-* The DeOldify.NET.exe file will appear in the Implementation/Release folder. The application is ready to work!
+* The DeOldify.NET.linux.exe file will appear in the Implementation/Release folder. The application is ready to work!
 
 * Run application using "mono DeOldify.NET.exe" command in terminal or double click as in Windows.
 
