@@ -6,7 +6,7 @@
 /optimize
 /platform:anycpu
 /target:winexe
-/out:"Release\DeOldify.NET.exe"
+/out:"Release\DeOldify.NET.win.exe"
 /r:System.Drawing.dll
 /r:System.Windows.Forms.dll
 
@@ -24,3 +24,4 @@
 "src\Tensor.cs"
 "src\UI.cs"
 "src\DeOldify.cs"
+"src\AssemblyInfo.cs"
