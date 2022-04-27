@@ -6,7 +6,9 @@
 ## On Windows 7, 8, 8.1, 10, 11
 * Make sure that .NET Framework 4.5 (4.6 for SIMD-accelerated version) or higher is installed on your computer.
 
-* You can use any bit depth(x32 or x64), but on a 32-bit system you will not be able to process large images due to the limited amount of memory.
+* You can use any bit depth (x32 or x64), but on a 32-bit system you will not be able to process large images due to the limited amount of memory.
+
+* **SIMD is supported only in 64-bit mode. On a 32-bit machine, you should use the regular version.**
 
 * At least ~~3 GB~~ **1.5 GB with new convolution algorithm** of free RAM is required to run.
 
