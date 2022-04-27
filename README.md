@@ -4,7 +4,7 @@
 # How to run
 
 ## On Windows 7, 8, 8.1, 10, 11
-* Make sure that .NET Framework 4.5 or higher is installed on your computer.
+* Make sure that .NET Framework 4.5 (4.6 for SIMD-accelerated version) or higher is installed on your computer.
 
 * You can use any bit depth(x32 or x64), but on a 32-bit system you will not be able to process large images due to the limited amount of memory.
 
