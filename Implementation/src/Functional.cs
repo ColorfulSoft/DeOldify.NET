@@ -3,6 +3,7 @@
 //*************************************************************************************************
 
 using System;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
@@ -107,119 +108,9 @@ namespace ColorfulSoft.DeOldify
             return x;
         }
 
-        // Improved version of this: https://habr.com/ru/post/448436/
-        /// <summary>
-        /// Converts input tensor to matrix view.
-        /// </summary>
-        /// <param name="src">Input tensor.</param>
-        /// <param name="srcC">Input's channels.</param>
-        /// <param name="srcH">Input's height.</param>
-        /// <param name="srcW">Input's width.</param>
-        /// <param name="kernelY">Kernel's height.</param>
-        /// <param name="kernelX">Kernel's width.</param>
-        /// <param name="dilationY">Dilation by height.</param>
-        /// <param name="dilationX">Dilation by width.</param>
-        /// <param name="strideY">Stride by height.</param>
-        /// <param name="strideX">Stride by width.</param>
-        /// <param name="padY">Padding by top side.</param>
-        /// <param name="padX">Padding by left side.</param>
-        /// <param name="padH">Padding by bottom side.</param>
-        /// <param name="padW">Padding by right side.</param>
-        /// <param name="buf">Buffer.</param>
-        public static void im2col(float* src,
-                                  int srcC,
-                                  int srcH,
-                                  int srcW,
-                                  int kernelY,
-                                  int kernelX,
-                                  int dilationY,
-                                  int dilationX,
-                                  int strideY,
-                                  int strideX,
-                                  int padY,
-                                  int padX,
-                                  int padH,
-                                  int padW,
-                                  float* buf)
-        {
-            int dstH = (srcH + padY + padH - (dilationY * (kernelY - 1) + 1)) / strideY + 1;
-            int dstW = (srcW + padX + padW - (dilationX * (kernelX - 1) + 1)) / strideX + 1;
-            for(int sc = 0; sc < srcC; ++sc)
-            {
-                for(int ky = 0; ky < kernelY; ky++)
-                {
-                    for(int kx = 0; kx < kernelX; kx++)
-                    {
-                        for(int dy = 0; dy < dstH; ++dy)
-                        {
-                            int sy = dy * strideY + ky * dilationY - padY;
-                            if((sy < 0) || (sy >= srcH))
-                            {
-                                for(int dx = 0; dx < dstW; ++dx)
-                                {
-                                    *buf++ = 0;
-                                }
-                                continue;
-                            }
-                            for(int dx = 0; dx < dstW; ++dx)
-                            {
-                                int sx = dx * strideX + kx * dilationX - padX;
-                                if((sx >= 0) && (sx < srcW))
-                                {
-                                    *buf++ = src[(sc * srcH + sy) * srcW + sx];
-                                }
-                                else
-                                {
-                                    *buf++ = 0;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Improved version of this: https://habr.com/ru/post/448436/
-        /// <summary>
-        /// Matrix multiplication.
-        /// </summary>
-        /// <param name="M">Size.</param>
-        /// <param name="N">Size.</param>
-        /// <param name="K">Size.</param>
-        /// <param name="A">Matrix A.</param>
-        /// <param name="B">Matrix B.</param>
-        /// <param name="C">Result.</param>
-        public static void gemm_nn(int M,
-                                   int N,
-                                   int K,
-                                   float* A,
-                                   float* B,
-                                   float* C)
-        {
-            var Bt = (float*)Marshal.AllocHGlobal(K * N * sizeof(float)).ToPointer();
-            for(int j = 0; j < N; ++j)
-            {
-                for(int k = 0; k < K; ++k)
-                {
-                    Bt[j * K + k] = B[k * N + j];
-                }
-            }
-            Parallel.For(0, M, (int i) =>
-            {
-                for(int j = 0; j < N; ++j)
-                {
-                    var sum = 0f;
-                    for(int k = 0; k < K; ++k)
-                    {
-                        sum += A[i * K + k] * Bt[j * K + k];
-                    }
-                    C[i * N + j] = sum;
-                }
-            });
-            Marshal.FreeHGlobal((IntPtr)Bt);
-        }
-
-        // Improved version of this: https://habr.com/ru/post/448436/
+        // (C) Gleb S. Brykin, 2022
+        // >>> "Looking for an efficient algorithm of performing multidimensional
+        // convolutions in managed code."
         /// <summary>
         /// Conv2d.
         /// </summary>
@@ -258,31 +149,167 @@ namespace ColorfulSoft.DeOldify
             int dstH = (srcH + padY + padH - (dilationY * (kernelY - 1) + 1)) / strideY + 1;
             int dstW = (srcW + padX + padW - (dilationX * (kernelX - 1) + 1)) / strideX + 1;
             var y = new Tensor(dstC, dstH, dstW);
-            var buf = (float*)Marshal.AllocHGlobal(srcC * dstH * dstW * kernelY * kernelX * sizeof(float)).ToPointer();
             // Pointers
-            var pdst = y.Data;
+            var dst = y.Data;
             var pweight = weight.Data;
-            var psrc = x.Data;
-            int M = dstC / group;
-            int N = dstH * dstW;
-            int K = srcC * kernelY * kernelX / group;
-            im2col(psrc, srcC, srcH, srcW, kernelY, kernelX, dilationY, dilationX, strideY, strideX, padY, padX, padH, padW, buf);
-            for(int g = 0; g < group; ++g)
-            {
-                gemm_nn(M, N, K, pweight + M * K * g, buf + N * K * g, pdst + M * N * g);
-            }
+            var src = x.Data;
+            dstC = dstC / group;
+            srcC = srcC / group;
+            int weight_base = srcC * kernelY * kernelX;
+            int buf_size = srcC * kernelY * kernelX * sizeof(float);
             if(bias != null)
             {
-                var pbias = bias.Data;
-                for(int i = 0; i < dstC; ++i)
+                for(int g = 0; g < group; ++g)
                 {
-                    for(int j = 0; j < N; ++j)
+                    var src_base1 = g * srcC;
+                    var dst_base1 = g * dstC;
+                    var bias_biased = bias.Data + g * dstC;
+                    Parallel.For(0, dstH, (int dy) =>
                     {
-                        pdst[i * N + j] += pbias[i];
-                    }
+                        var buffer = (float*)Marshal.AllocHGlobal(buf_size).ToPointer();
+                        var sy1 = dy * strideY - padY;
+                        for(int dx = 0; dx < dstW; ++dx)
+                        {
+                            var sx1 = dx * strideX - padX;
+                            var buf = buffer;
+                            for(int sc = 0; sc < srcC; ++sc)
+                            {
+                                var src_base2 = (src_base1 + sc) * srcH;
+                                for(int ky = 0; ky < kernelY; ++ky)
+                                {
+                                    int sy = sy1 + ky * dilationY;
+                                    if((sy < 0) || (sy >= srcH))
+                                    {
+                                        for(int kx = 0; kx < kernelX; ++kx)
+                                        {
+                                            *buf++ = 0;
+                                        }
+                                        continue;
+                                    }
+                                    var src_biased = src + (src_base2 + sy) * srcW;
+                                    for(int kx = 0; kx < kernelX; ++kx)
+                                    {
+                                        int sx = sx1 + kx * dilationX;
+                                        if((sx >= 0) && (sx < srcW))
+                                        {
+                                            *buf++ = src_biased[sx];
+                                        }
+                                        else
+                                        {
+                                            *buf++ = 0;
+                                        }
+                                    }
+                                }
+                            }
+                            var dst_biased = dst + dx;
+                            for(int dc = 0; dc < dstC; ++dc)
+                            {
+                                float sum = 0;
+                                var w = pweight + (g * dstC + dc) * weight_base;
+                                #if simd
+                                    var buffer_vec = (Vector4*)buffer;
+                                    var w_vec = (Vector4*)w;
+                                    var result = new Vector4(0f);
+                                    int m = 0;
+                                    for(; m < weight_base / 4; ++m)
+                                    {
+                                        result += *buffer_vec++ * *w_vec++;
+                                    }
+                                    sum = result.X + result.Y + result.Z + result.W;
+                                    m *= 4;
+                                    for(; m < weight_base; ++m)
+                                    {
+                                        sum += buffer[m] * w[m];
+                                    }
+                                #else
+                                    for(int m = 0; m < weight_base; ++m)
+                                    {
+                                        sum += buffer[m] * w[m];
+                                    }
+                                #endif
+                                dst_biased[((dst_base1 + dc) * dstH + dy) * dstW] = sum + bias_biased[dc];
+                            }
+                        }
+                        Marshal.FreeHGlobal((IntPtr)buffer);
+                    });
                 }
             }
-            Marshal.FreeHGlobal((IntPtr)buf);
+            else
+            {
+                for(int g = 0; g < group; ++g)
+                {
+                    var src_base1 = g * srcC;
+                    var dst_base1 = g * dstC;
+                    Parallel.For(0, dstH, (int dy) =>
+                    {
+                        var buffer = (float*)Marshal.AllocHGlobal(buf_size).ToPointer();
+                        var sy1 = dy * strideY - padY;
+                        for(int dx = 0; dx < dstW; ++dx)
+                        {
+                            var sx1 = dx * strideX - padX;
+                            var buf = buffer;
+                            for(int sc = 0; sc < srcC; ++sc)
+                            {
+                                var src_base2 = (src_base1 + sc) * srcH;
+                                for(int ky = 0; ky < kernelY; ++ky)
+                                {
+                                    int sy = sy1 + ky * dilationY;
+                                    if((sy < 0) || (sy >= srcH))
+                                    {
+                                        for(int kx = 0; kx < kernelX; ++kx)
+                                        {
+                                            *buf++ = 0;
+                                        }
+                                        continue;
+                                    }
+                                    var src_biased = src + (src_base2 + sy) * srcW;
+                                    for(int kx = 0; kx < kernelX; ++kx)
+                                    {
+                                        int sx = sx1 + kx * dilationX;
+                                        if((sx >= 0) && (sx < srcW))
+                                        {
+                                            *buf++ = src_biased[sx];
+                                        }
+                                        else
+                                        {
+                                            *buf++ = 0;
+                                        }
+                                    }
+                                }
+                            }
+                            var dst_biased = dst + dx;
+                            for(int dc = 0; dc < dstC; ++dc)
+                            {
+                                float sum = 0;
+                                var w = pweight + (g * dstC + dc) * weight_base;
+                                #if simd
+                                    var buffer_vec = (Vector4*)buffer;
+                                    var w_vec = (Vector4*)w;
+                                    var result = new Vector4(0f);
+                                    int m = 0;
+                                    for(; m < weight_base / 4; ++m)
+                                    {
+                                        result += *buffer_vec++ * *w_vec++;
+                                    }
+                                    sum = result.X + result.Y + result.Z + result.W;
+                                    m *= 4;
+                                    for(; m < weight_base; ++m)
+                                    {
+                                        sum += buffer[m] * w[m];
+                                    }
+                                #else
+                                    for(int m = 0; m < weight_base; ++m)
+                                    {
+                                        sum += buffer[m] * w[m];
+                                    }
+                                #endif
+                                dst_biased[((dst_base1 + dc) * dstH + dy) * dstW] = sum;
+                            }
+                        }
+                        Marshal.FreeHGlobal((IntPtr)buffer);
+                    });
+                }
+            }
             return y;
         }
 
