@@ -12,6 +12,8 @@
 
 * At least ~~3 GB~~ **1.5 GB with new convolution algorithm** of free RAM is required to run.
 
+* Select a version of DeOldify.NET the one you want to build. Versions with and without simd are available, with float32 typed weights (higher accuracy) and float16 typed weights (lower accuracy and smaller file size), with a stable model and an artistic model, as in the original DeOldify. Further actions depend on your choice.
+
 * Download and unpack the repository, then download DeOldify.hmodel from the releases(https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOldify.hmodel) and place it in Implementation\src\Resources.
 
 * Run `Compile.bat` or `Compile.simd.bat` for SIMD-accelerated version
