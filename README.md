@@ -1,4 +1,4 @@
-# DeOldify.NET
+# DeOldify.NET [An update is being made. Please do not download the repository until 23:59 Moscow time.]
 *C# implementation of Jason Antic's DeOldify(https://github.com/jantic/DeOldify)* **Only for photos for now!**
 
 # How to run
