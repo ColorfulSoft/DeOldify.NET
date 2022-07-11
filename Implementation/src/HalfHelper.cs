@@ -1,11 +1,13 @@
 ﻿//*************************************************************************************************
-//* (C) ColorfulSoft corp., 2021. All Rights reserved.
+//* (C) ColorfulSoft corp., 2021 - 2022. All Rights reserved.
 //*************************************************************************************************
 
 using System;
 
 namespace ColorfulSoft.DeOldify
 {
+
+#if half
 
     // Adapted from this: https://sourceforge.net/projects/csharp-half/
 
@@ -90,5 +92,7 @@ namespace ColorfulSoft.DeOldify
         }
 
     }
+
+#endif
 
 }

@@ -1,5 +1,5 @@
 ﻿//*************************************************************************************************
-//* (C) ColorfulSoft corp., 2021. All Rights reserved.
+//* (C) ColorfulSoft corp., 2021 - 2022. All Rights reserved.
 //*************************************************************************************************
 
 using System;
@@ -56,7 +56,7 @@ namespace ColorfulSoft.DeOldify
             this.__Text.Height = 48;
             this.__Text.Top = 300;
             this.__Text.Left = 10;
-            this.__Text.Text = "* Neural network architecture and weights by Jason Antic (https://github.com/jantic/DeOldify)\n* This application is developed by Gleb S. Brykin from ColorfulSoft(https://github.com/ColorfulSoft)\n© ColorfulSoft corp., 2021. All Rights reserved";
+            this.__Text.Text = "* Neural network architecture and weights by Jason Antic (https://github.com/jantic/DeOldify)\n* This application is developed by Gleb S. Brykin from ColorfulSoft(https://github.com/ColorfulSoft)\n© ColorfulSoft corp., 2021 - 2022. All Rights reserved";
             this.__Text.ForeColor = SystemColors.Control;
             this.Controls.Add(this.__Text);
         }
@@ -534,11 +534,22 @@ namespace ColorfulSoft.DeOldify
         /// </summary>
         public MainForm() : base()
         {
-            this.Text = "DeOldify.NET v1.1" +
-            #if simd
-                " with SIMD";
+            this.Text =
+            #if stable
+                "Stable " +
             #else
-                "";
+                "Artistic " +
+            #endif
+                "DeOldify.NET v2.0" +
+            #if simd
+                " with SIMD" +
+            #else
+                "" +
+            #endif
+            #if half
+                " w16";
+            #else
+                " w32";
             #endif
             this.Icon = Icon.FromHandle((new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("Icon.png"))).GetHicon());
             this.BackColor = SystemColors.ControlDarkDark;

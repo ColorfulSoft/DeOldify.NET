@@ -1,5 +1,5 @@
 ﻿//*************************************************************************************************
-//* (C) ColorfulSoft corp., 2021. All Rights reserved.
+//* (C) ColorfulSoft corp., 2021 - 2022. All Rights reserved.
 //*************************************************************************************************
 
 using System;
@@ -18,9 +18,13 @@ namespace ColorfulSoft.DeOldify
         /// Entry point.
         /// </summary>
         [STAThread]
-        public static void Main()
+        public static void Main(string[] args)
         {
             DeOldify.Initialize();
+            if(args.Length > 0)
+            {
+                return;
+            }
             Application.EnableVisualStyles();
             try
             {

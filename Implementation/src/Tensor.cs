@@ -1,5 +1,5 @@
 ﻿//*************************************************************************************************
-//* (C) ColorfulSoft corp., 2021. All Rights reserved.
+//* (C) ColorfulSoft corp., 2021 - 2022. All Rights reserved.
 //*************************************************************************************************
 
 using System;
@@ -54,14 +54,14 @@ namespace ColorfulSoft.DeOldify
         {
             this.Ndim = shape.Length;
             this.Numel = 1;
-            this.Shape = (int*)Marshal.AllocHGlobal(sizeof(int) * this.Ndim).ToPointer();
+            this.Shape = (int*)Marshal.AllocCoTaskMem(sizeof(int) * this.Ndim).ToPointer();
             var Pshape = this.Shape;
             foreach(var Dim in shape)
             {
                 this.Numel *= Dim;
                 *Pshape++ = Dim;
             }
-            this.Data = (float*)Marshal.AllocHGlobal(sizeof(float) * this.Numel).ToPointer();
+            this.Data = (float*)Marshal.AllocCoTaskMem(sizeof(float) * this.Numel).ToPointer();
         }
 
         /// <summary>
@@ -71,12 +71,12 @@ namespace ColorfulSoft.DeOldify
         {
             if((this.Data != null) && this.__DisposeData)
             {
-                Marshal.FreeHGlobal((IntPtr)this.Data);
+                Marshal.FreeCoTaskMem((IntPtr)this.Data);
                 this.Data = null;
             }
             if(this.Shape != null)
             {
-                Marshal.FreeHGlobal((IntPtr)this.Shape);
+                Marshal.FreeCoTaskMem((IntPtr)this.Shape);
                 this.Shape = null;
             }
         }
@@ -88,12 +88,12 @@ namespace ColorfulSoft.DeOldify
         {
             if((this.Data != null) && this.__DisposeData)
             {
-                Marshal.FreeHGlobal((IntPtr)this.Data);
+                Marshal.FreeCoTaskMem((IntPtr)this.Data);
                 this.Data = null;
             }
             if(this.Shape != null)
             {
-                Marshal.FreeHGlobal((IntPtr)this.Shape);
+                Marshal.FreeCoTaskMem((IntPtr)this.Shape);
                 this.Shape = null;
             }
         }
@@ -108,7 +108,7 @@ namespace ColorfulSoft.DeOldify
             t.Data = this.Data;
             t.Ndim = 2;
             t.Numel = this.Numel;
-            t.Shape = (int*)Marshal.AllocHGlobal(sizeof(int) * 2).ToPointer();
+            t.Shape = (int*)Marshal.AllocCoTaskMem(sizeof(int) * 2).ToPointer();
             t.Shape[0] = this.Shape[0];
             t.Shape[1] = this.Shape[1] * this.Shape[2];
             this.__DisposeData = false;
@@ -127,7 +127,7 @@ namespace ColorfulSoft.DeOldify
             t.Data = this.Data;
             t.Ndim = 3;
             t.Numel = this.Numel;
-            t.Shape = (int*)Marshal.AllocHGlobal(sizeof(int) * 3).ToPointer();
+            t.Shape = (int*)Marshal.AllocCoTaskMem(sizeof(int) * 3).ToPointer();
             t.Shape[0] = this.Shape[0];
             t.Shape[1] = h;
             t.Shape[2] = w;
