@@ -1,4 +1,4 @@
-# DeOldify.NET [An update is being made. Please do not download the repository until 23:59 Moscow time.]
+# DeOldify.NET
 *C# implementation of Jason Antic's DeOldify(https://github.com/jantic/DeOldify)* **Only for photos for now!**
 
 # How to run
@@ -8,17 +8,35 @@
 
 * You can use any bit depth (x32 or x64), but on a 32-bit system you will not be able to process large images due to the limited amount of memory.
 
-* **SIMD is supported only in 64-bit mode. On a 32-bit machine, you should use the regular version.**
+* **SIMD and Stable model are supported only in 64-bit mode. On a 32-bit machine, you should use the regular artistic version.**
 
-* At least ~~3 GB~~ **1.5 GB with new convolution algorithm** of free RAM is required to run.
+* At least ~~3 GB~~ **1.5 GB with new convolution algorithm** of free RAM is required to run Artistic model. About 3 GB is required for Stable model.
 
 * Select a version of DeOldify.NET the one you want to build. Versions with and without simd are available, with float32 typed weights (higher accuracy) and float16 typed weights (lower accuracy and smaller file size), with a stable model and an artistic model, as in the original DeOldify. Further actions depend on your choice.
 
-* Download and unpack the repository, then download DeOldify.hmodel from the releases(https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOldify.hmodel) and place it in Implementation\src\Resources.
+* Download and unpack the repository, then download model from the releases (https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights) and place it in Implementation\src\Resources.
 
-* Run `Compile.bat` or `Compile.simd.bat` for SIMD-accelerated version
+|Model|Details|File|
+|:---:|:-----:|:--:|
+|float32 Artistic|Artistic model with single-precision floating point weights. More accurate than compressed float16 model.|https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/Artistic.model|
+|float16 Artistic|Artistic model with half-precision floating point weights. Less accurate than original float32 model, but requires 2 times less disk space.|https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/Artistic.hmodel|
+|float32 Stable|Stable model with single-precision floating point weights. More accurate than compressed float16 model.|https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/Stable.model|
+|float16 Stable|Stable model with single-precision floating point weights. Less accurate than original float32 model, but requires 2 times less disk space.|https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/Stable.hmodel|
 
-* The `DeOldify.NET.win.exe` or `DeOldify.NET.win.simd.exe` file will appear in the `Implementation\Release` folder. The application is ready to work!
+* Select compilation script and run it.
+
+|Build|Details|Script|
+|:---:|:-----:|:----:|
+|Artistic|Basic version of Artistic colorizer with float16 weights|Compile.artistic.bat|
+|Artistic.w32|Artistic colorizer with float32 weights|Compile.artistic.float.bat|
+|Artistic.simd|Artistic colorizer with SIMD acceleration and float16 weights|Compile.artistic.simd.bat|
+|Artistic.simd.w32|Artistic colorizer with SIMD acceleration and float32 weights|Compile.artistic.simd.float.bat|
+|Stable|Basic version of Stable colorizer with float16 weights|Compile.stable.bat|
+|Stable.w32|Stable colorizer with float32 weights|Compile.stable.float.bat|
+|Stable.simd|Stable colorizer with SIMD acceleration and float16 weights|Compile.stable.simd.bat|
+|Stable.simd.w32|Stable colorizer with SIMD acceleration and float32 weights|Compile.stable.simd.float.bat|
+
+* The executable file will appear in the `Implementation\Release` folder. The application is ready to work!
 
 * **Use!**
 
@@ -35,14 +53,22 @@ sudo apt-get upgrade
 sudo apt-get install mono-complete
 ```
 
-* Download sources.
+* Get sources; select and download model
+
+|Model|Details|File|
+|:---:|:-----:|:--:|
+|float32 Artistic|Artistic model with single-precision floating point weights. More accurate than compressed float16 model.|https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/Artistic.model|
+|float16 Artistic|Artistic model with half-precision floating point weights. Less accurate than original float32 model, but requires 2 times less disk space.|https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/Artistic.hmodel|
+|float32 Stable|Stable model with single-precision floating point weights. More accurate than compressed float16 model.|https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/Stable.model|
+|float16 Stable|Stable model with single-precision floating point weights. Less accurate than original float32 model, but requires 2 times less disk space.|https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/Stable.hmodel|
+
 <details>
 <summary>Using git and terminal</summary>
 
 ```
 git clone https://github.com/ColorfulSoft/DeOldify.NET.git
 cd DeOldify.NET
-wget https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOldify.hmodel -O Implementation/src/Resources/DeOldify.hmodel
+wget <model url> -O Implementation/src/Resources/<model name>
 ```
 
 </details>
@@ -51,14 +77,25 @@ wget https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOl
 
 * Download and unpack the repository.
   
-* Download `DeOldify.hmodel` from the releases(https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/DeOldify.hmodel) and place it in `Implementation/src/Resources`.
+* Download model from the releases(https://github.com/ColorfulSoft/DeOldify.NET/releases/download/Weights/) and place it in `Implementation/src/Resources`.
 </details>
 
-* Run Compile.sh `bash Compile.sh` or Compile.simd.sh `bash Compile.simd.sh`
+* Select and run compilation script
 
-* The `DeOldify.NET.linux.exe` or `DeOldify.NET.linux.simd.exe` file will appear in the `Implementation/Release` folder. The application is ready to work!
+|Build|Details|Script|
+|:---:|:-----:|:----:|
+|Artistic|Basic version of Artistic colorizer with float16 weights|Compile.artistic.sh|
+|Artistic.w32|Artistic colorizer with float32 weights|Compile.artistic.float.sh|
+|Artistic.simd|Artistic colorizer with SIMD acceleration and float16 weights|Compile.artistic.simd.sh|
+|Artistic.simd.w32|Artistic colorizer with SIMD acceleration and float32 weights|Compile.artistic.simd.float.sh|
+|Stable|Basic version of Stable colorizer with float16 weights|Compile.stable.sh|
+|Stable.w32|Stable colorizer with float32 weights|Compile.stable.float.sh|
+|Stable.simd|Stable colorizer with SIMD acceleration and float16 weights|Compile.stable.simd.sh|
+|Stable.simd.w32|Stable colorizer with SIMD acceleration and float32 weights|Compile.stable.simd.float.sh|
 
-* Run application using `mono DeOldify.NET.linux.exe` or `mono DeOldify.NET.linux.simd.exe` command in terminal or double click as in Windows.
+* The executable file will appear in the `Implementation/Release` folder. The application is ready to work!
+
+* Run application using `mono <build name>.exe` command in terminal or double click as in Windows.
 
 * **Use!**
 
@@ -88,6 +125,7 @@ The meaning of most fast convolution algorithms, such as im2col or im2row, invol
 
 # Updates
 
+* **[11.07.2022] - DeOldify.NET now supports Stable model from original DeOldify. Added the ability to build DeOldify.NET with uncompressed original weights to obtain the maximum quality of coloring.**
 * **[27.04.2022] - DeOldify.NET has become a testing ground for the latest optimized algorithms. The Conv2d layer has been optimized and now requires significantly less memory. Support for SIMD vectorization will allow you to get about a fourfold increase in performance.**
 * [29.10.2021] - **Big refactoring and code clean up**
 * [29.10.2021] - **Linux support**
