@@ -109,6 +109,10 @@ wget <model url> -O Implementation/src/Resources/<model name>
 
 ![Example2](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Example2.jpg)
 
+|Original|Artistic|Stable|
+|:------:|:------:|:----:|
+|![Original](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Original.jpg)|![Artistic](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Artistic.jpg)|![Stable](https://github.com/ColorfulSoft/DeOldify.NET/blob/main/Examples/Stable.jpg)|
+
 # New algorithms
 
 DeOldify.NET has become a platform for testing the latest highly optimized algorithms, which will then be applied in the System.AI project. In this section you can find some information about the results of the experiments.
