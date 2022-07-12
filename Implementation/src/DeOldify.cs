@@ -264,7 +264,7 @@ namespace ColorfulSoft.DeOldify
                 {
                     return SelfAttention(BatchNorm2d(Functional.ReLU_(Conv2d(BatchNorm2d(Functional.ReLU_(Conv2d(cat_x, layer + ".conv1.0", ckpt)), layer + ".conv1.2", ckpt), layer + ".conv2.0", ckpt)), layer + ".conv2.2", ckpt), layer + ".conv2.3", ckpt);
                 }
-                return Functional.AvgPool2d(BatchNorm2d(Functional.ReLU_(Conv2d(BatchNorm2d(Functional.ReLU_(Conv2d(cat_x, layer + ".conv1.0", ckpt)), layer + ".conv1.2", ckpt), layer + ".conv2.0", ckpt)), layer + ".conv2.2", ckpt), 2, 2, 1, 1, 0, 0, 1, 1);
+                return BatchNorm2d(Functional.ReLU_(Conv2d(BatchNorm2d(Functional.ReLU_(Conv2d(cat_x, layer + ".conv1.0", ckpt)), layer + ".conv1.2", ckpt), layer + ".conv2.0", ckpt)), layer + ".conv2.2", ckpt);
             }
         #endif
 
