@@ -599,11 +599,7 @@ namespace ColorfulSoft.DeOldify
               this.__InputImage.MouseEnter += delegate
               {
                   this.__InputImage.Image = this.__BlurryInput;
-                  #if Linux
                   this.__InputImage.Controls.Add(this.__OpenInput);
-                  #else
-                  this.__OpenInput.Show();
-                  #endif
               };
               this.__InputImage.MouseLeave += delegate
               {
@@ -614,11 +610,7 @@ namespace ColorfulSoft.DeOldify
                       this.__InputImage.Image = this.__BlurryInput;
                       return;
                   }
-                  #if Linux
                   this.__InputImage.Controls.Remove(this.__OpenInput);
-                  #else
-                  this.__OpenInput.Hide();
-                  #endif
               };
               this.__SetInputImage(new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("Input.jpg")));
               this.__InputBox.Controls.Add(this.__InputImage);
@@ -631,11 +623,7 @@ namespace ColorfulSoft.DeOldify
               this.__OpenInput.Text = "Open B&W image";
               this.__OpenInput.Click += delegate
               {
-                  #if Linux
                   this.__InputImage.Controls.Remove(this.__OpenInput);
-                  #else
-                  this.__OpenInput.Hide();
-                  #endif
                   var OFD = new OpenFileDialog();
                   OFD.Title = "Open";
                   OFD.Filter = "Images (*.bmp; *.emf; *.exif; *.gif; *.ico; *.jpg; *.png; *.tiff; *.wmf)|*.bmp; *.emf; *.exif; *.gif; *.ico; *.jpg; *.png; *.tiff; *.wmf|All files|*.*";
@@ -644,11 +632,6 @@ namespace ColorfulSoft.DeOldify
                       this.__SetInputImage(new Bitmap(OFD.FileName));
                   }
               };
-              #if Linux
-              #else
-              this.__OpenInput.Hide();
-              this.__InputImage.Controls.Add(this.__OpenInput);
-              #endif
             this.Controls.Add(this.__InputBox);
             //-> __OutputBox
             this.__OutputBox = new GroupBox();
@@ -668,11 +651,7 @@ namespace ColorfulSoft.DeOldify
               this.__OutputImage.MouseEnter += delegate
               {
                   this.__OutputImage.Image = this.__BlurryOutput;
-                  #if Linux
                   this.__OutputImage.Controls.Add(this.__SaveOutput);
-                  #else
-                  this.__SaveOutput.Show();
-                  #endif
               };
               this.__OutputImage.MouseLeave += delegate
               {
@@ -683,11 +662,7 @@ namespace ColorfulSoft.DeOldify
                       this.__OutputImage.Image = this.__BlurryOutput;
                       return;
                   }
-                  #if Linux
                   this.__OutputImage.Controls.Remove(this.__SaveOutput);
-                  #else
-                  this.__SaveOutput.Hide();
-                  #endif
               };
               this.__SetOutputImage(new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("Output.jpg")));
               this.__OutputBox.Controls.Add(this.__OutputImage);
@@ -699,11 +674,7 @@ namespace ColorfulSoft.DeOldify
               this.__SaveOutput.Text = "Save";
               this.__SaveOutput.Click += delegate
               {
-                  #if Linux
                   this.__OutputImage.Controls.Remove(this.__SaveOutput);
-                  #else
-                  this.__SaveOutput.Hide();
-                  #endif
                   var SFD = new SaveFileDialog();
                   SFD.Title = "Save colorized";
                   SFD.Filter = "Images (*.bmp)|*.bmp|Images (*.emf)|*.emf|Images (*.exif)|*.exif|Images (*.gif)|*.gif|Images (*.ico)|*.ico|Images (*.jpg)|*.jpg|Images (*.png)|*.png|Images (*.tiff)|*.tiff|Images (*.wmf)|*.wmf";
@@ -759,11 +730,6 @@ namespace ColorfulSoft.DeOldify
                       }
                   }
               };
-              #if Linux
-              #else
-              this.__SaveOutput.Hide();
-              this.__OutputImage.Controls.Add(this.__SaveOutput);
-              #endif
             this.Controls.Add(this.__OutputBox);
             //
             this.__ColorfulSoftLogo = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ColorfulSoft.png"));
