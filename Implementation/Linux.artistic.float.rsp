@@ -1,4 +1,3 @@
-/define:Linux
 /unsafe
 /optimize
 /platform:anycpu

@@ -1,4 +1,3 @@
-/define:Linux
 /define:simd
 /unsafe
 /optimize

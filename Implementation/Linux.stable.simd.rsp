@@ -1,4 +1,3 @@
-/define:Linux
 /define:simd
 /define:half
 /define:stable
