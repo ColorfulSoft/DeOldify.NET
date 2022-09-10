@@ -3,6 +3,7 @@
 //*************************************************************************************************
 
 using System;
+using System.IO;
 using System.Threading;
 using System.Drawing;
 using System.Reflection;
@@ -359,6 +360,11 @@ namespace ColorfulSoft.DeOldify
         private Thread __ColorizationThread;
 
         /// <summary>
+        /// The name of the open file.
+        /// </summary>
+        private string __IFName;
+
+        /// <summary>
         /// Blurrifies the image.
         /// </summary>
         /// <param name="source">Input image.</param>
@@ -540,7 +546,7 @@ namespace ColorfulSoft.DeOldify
             #else
                 "Artistic " +
             #endif
-                "DeOldify.NET v2.0" +
+                "DeOldify.NET v2.1" +
             #if simd
                 " with SIMD" +
             #else
@@ -565,6 +571,48 @@ namespace ColorfulSoft.DeOldify
                 }
                 catch
                 {
+                }
+            };
+            this.AllowDrop = true;
+            this.DragDrop += (object sender, DragEventArgs e) =>
+            {
+                if(e.Data.GetDataPresent(DataFormats.FileDrop))
+                {
+                    string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                    try
+                    {
+                        this.__SetInputImage(new Bitmap(files[0]));
+                        this.__IFName = Path.GetFileNameWithoutExtension(files[0]);
+                    }
+                    catch(Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                        return;
+                    }
+                }
+                if(e.Data.GetDataPresent(DataFormats.Bitmap))
+                {
+                    try
+                    {
+                        this.__SetInputImage((Bitmap)e.Data.GetData(DataFormats.Bitmap));
+                        this.__IFName = null;
+                    }
+                    catch(Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+            };
+            this.DragEnter += (object sender, DragEventArgs e) =>
+            {
+                if(e.Data.GetDataPresent(DataFormats.Bitmap) ||
+                   e.Data.GetDataPresent(DataFormats.FileDrop)) 
+                {
+                    e.Effect = DragDropEffects.Copy;
+                }
+                else
+                {
+                    e.Effect = DragDropEffects.None;
                 }
             };
             // HelpForm
@@ -629,7 +677,15 @@ namespace ColorfulSoft.DeOldify
                   OFD.Filter = "Images (*.bmp; *.emf; *.exif; *.gif; *.ico; *.jpg; *.png; *.tiff; *.wmf)|*.bmp; *.emf; *.exif; *.gif; *.ico; *.jpg; *.png; *.tiff; *.wmf|All files|*.*";
                   if(OFD.ShowDialog() == DialogResult.OK)
                   {
-                      this.__SetInputImage(new Bitmap(OFD.FileName));
+                      try
+                      {
+                          this.__SetInputImage(new Bitmap(OFD.FileName));
+                          this.__IFName = Path.GetFileNameWithoutExtension(OFD.FileName);
+                      }
+                      catch(Exception e)
+                      {
+                          MessageBox.Show(e.Message);
+                      }
                   }
               };
             this.Controls.Add(this.__InputBox);
@@ -677,7 +733,9 @@ namespace ColorfulSoft.DeOldify
                   this.__OutputImage.Controls.Remove(this.__SaveOutput);
                   var SFD = new SaveFileDialog();
                   SFD.Title = "Save colorized";
-                  SFD.Filter = "Images (*.bmp)|*.bmp|Images (*.emf)|*.emf|Images (*.exif)|*.exif|Images (*.gif)|*.gif|Images (*.ico)|*.ico|Images (*.jpg)|*.jpg|Images (*.png)|*.png|Images (*.tiff)|*.tiff|Images (*.wmf)|*.wmf";
+                  SFD.Filter = "BMP images (*.bmp)|*.bmp|EMF images (*.emf)|*.emf|EXIF images (*.exif)|*.exif|GIF images (*.gif)|*.gif|ICO images (*.ico)|*.ico|JPG images (*.jpg)|*.jpg|PNG images (*.png)|*.png|TIFF images (*.tiff)|*.tiff|WMF images (*.wmf)|*.wmf";
+                  SFD.FilterIndex = 7;
+                  SFD.FileName = (this.__IFName == null) ? "deoldified" : (this.__IFName + "-deoldified");
                   if(SFD.ShowDialog() == DialogResult.OK)
                   {
                       switch(SFD.FilterIndex)
