@@ -129,6 +129,7 @@ The meaning of most fast convolution algorithms, such as im2col or im2row, invol
 
 # Updates
 
+* [10.09.2022] - **Version 2.1** has been released. The ability to drag and drop images into the application has been added, error handling has been improved, and the process of saving the result has been simplified.
 * [20.07.2022] - The Windows and Linux versions are combined.
 * **[11.07.2022] - DeOldify.NET now supports Stable model from original DeOldify. Added the ability to build DeOldify.NET with uncompressed original weights to obtain the maximum quality of coloring.**
 * **[27.04.2022] - DeOldify.NET has become a testing ground for the latest optimized algorithms. The Conv2d layer has been optimized and now requires significantly less memory. Support for SIMD vectorization will allow you to get about a fourfold increase in performance.**
