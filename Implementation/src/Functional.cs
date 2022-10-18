@@ -109,8 +109,7 @@ namespace ColorfulSoft.DeOldify
         }
 
         // (C) Gleb S. Brykin, 2022
-        // >>> "Looking for an efficient algorithm of performing multidimensional
-        // convolutions in managed code."
+        // Gleb S. Brykin: Patch2Vec: a simple and efficient convolution algorithm for mobile neural networks, WNNA-2022 poster, 2022
         /// <summary>
         /// Conv2d.
         /// </summary>
