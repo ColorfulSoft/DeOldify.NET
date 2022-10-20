@@ -1,7 +1,7 @@
 # DeOldify.NET
 *C# implementation of Jason Antic's DeOldify(https://github.com/jantic/DeOldify)* **Only for photos for now!**
 
-Paper "DeOldify.NET: cross-platform application for coloring black and white photos" was accepted to poster session of _Neuroinformatics - 2022_ conference. The paper describes technical details of managed C# implementation of the original DeOldify and contains some comparisons with different other image colorization products.
+Paper "__DeOldify.NET: cross-platform application for coloring black and white photos__" was accepted to poster session of _Neuroinformatics - 2022_ conference. The paper describes technical details of managed C# implementation of the original DeOldify and contains some comparisons with different other image colorization products.
 
 # How to run
 
