@@ -133,6 +133,8 @@ In DeOldify.NET two versions of the patch2vec conv2d algorithm are implemented -
 |patch2vec            |114970   |
 |**patch2vec + simd** |**33270**|
 
+___All tests was done in Windows 7 x64 laptop with Intel(R) Core(TM) i5-6300HQ CPU and 32 GB of RAM___
+
 # Updates
 
 * [10.09.2022] - **Version 2.1** has been released. The ability to drag and drop images into the application has been added, error handling has been improved, and the process of saving the result has been simplified.
