@@ -11,13 +11,13 @@
 /r:System.Drawing.dll
 /r:System.Windows.Forms.dll
 
+/win32manifest:"src\Resources\app.manifest"
+
 /resource:"src\Resources\Preview.jpg"
-/resource:"src\Resources\Input.jpg"
-/resource:"src\Resources\Output.jpg"
 /resource:"src\Resources\Info.png"
 /resource:"src\Resources\Icon.png"
+
 /resource:"src\Resources\Artistic.hmodel"
-/resource:"src\Resources\ColorfulSoft.png"
 
 "src\Functional.cs"
 "src\HalfHelper.cs"
