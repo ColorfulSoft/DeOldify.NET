@@ -503,7 +503,7 @@ namespace ColorfulSoft.DeOldify
                 SFD.FilterIndex = 7;
                 SFD.FileName = destFileName;
                 SFD.InitialDirectory = destPath;
-                SFD.CheckFileExists = true;
+                SFD.OverwritePrompt = true;
                 if(SFD.ShowDialog() == DialogResult.OK)
                 {
                     destPath = SFD.FileName;
@@ -515,7 +515,6 @@ namespace ColorfulSoft.DeOldify
                     else {
                         format = GetImageFormat(SFD.FilterIndex);
                     }
-
                 }
                 else
                 {
