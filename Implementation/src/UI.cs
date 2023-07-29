@@ -132,6 +132,9 @@ namespace ColorfulSoft.DeOldify
         /// </summary>
         private Bitmap __InputImage;
 
+        private ContextMenuStrip __InputBoxContextMenuStrip;
+        private ToolStripMenuItem __InputBoxMenuItem1;
+
         /// <summary>
         /// Button to open file dialog.
         /// </summary>
@@ -156,9 +159,9 @@ namespace ColorfulSoft.DeOldify
         /// Output image picture box context menu.
         /// </summary>
         private ContextMenuStrip __OutputBoxContextMenuStrip;
-        private ToolStripMenuItem __toolStripMenuItem1;
-        private ToolStripMenuItem __toolStripMenuItem2;
-        private ToolStripMenuItem __toolStripMenuItem3;
+        private ToolStripMenuItem __OutputBoxMenuItem1;
+        private ToolStripMenuItem __OutputBoxMenuItem2;
+        private ToolStripMenuItem __OutputBoxMenuItem3;
 
         /// <summary>
         /// Button to save output image.
@@ -203,8 +206,6 @@ namespace ColorfulSoft.DeOldify
         private string __ProgressLabelText = "{0} %";
 
         private TextBox __DebugMemo;
-
-
 
         /// <summary>
         /// Blurrifies the image.
@@ -478,6 +479,26 @@ namespace ColorfulSoft.DeOldify
         }
 
         /// <summary>
+        /// Open/Paste an image from clipboard
+        /// </summary>
+        private Boolean OpenImageFromClipboard ()
+        {
+
+            try
+            {
+                if (Clipboard.ContainsImage()) {
+                    OpenImage ( (Bitmap) Clipboard.GetImage() );
+                    return true;
+                }
+            }
+            // todo: show error message
+            catch { }
+
+            return false;
+
+        }
+
+        /// <summary>
         /// Saving an image
         /// </summary>
         /// <param name="saveas">True to show Save As dialog.</param>
@@ -539,6 +560,15 @@ namespace ColorfulSoft.DeOldify
 
             return true;
 
+        }
+
+        /// <summary>
+        /// Copy an output image to clipboard.
+        /// </summary>
+        private void CopyImageToClipboard()
+        {
+            if (__OutputPictureBox.Image != null)
+                Clipboard.SetDataObject((Bitmap)__OutputPictureBox.Image);
         }
 
         /// <summary>
@@ -688,6 +718,7 @@ namespace ColorfulSoft.DeOldify
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 this.Font = new Font("Segue UI", this.Font.Size);
             this.AllowDrop = true;
+            this.KeyPreview = true;
 
             // HelpForm
             this.__HelpForm = new HelpForm();
@@ -775,8 +806,14 @@ namespace ColorfulSoft.DeOldify
               this.__InputLabel.TextAlign = ContentAlignment.MiddleCenter;
               this.__InputLabel.ForeColor = Color.LightGray;
               this.__InputLabel.BackColor = Color.Transparent;
-              this.__InputLabel.Text = "(Drop an image here)";
+              this.__InputLabel.Text = "(Drop or paste an image here)";
               this.__InputPictureBox.Controls.Add(this.__InputLabel);
+
+              this.__InputBoxContextMenuStrip = new ContextMenuStrip();
+              this.__InputBoxMenuItem1 = new ToolStripMenuItem();
+              this.__InputBoxMenuItem1.Text = "Paste";
+              this.__InputBoxContextMenuStrip.Items.Add( this.__InputBoxMenuItem1);
+              this.__InputPictureBox.ContextMenuStrip =  this.__InputBoxContextMenuStrip;
 
             this.__OutputBox = new Panel();
             this.__OutputBox.Dock = DockStyle.Fill;
@@ -788,17 +825,17 @@ namespace ColorfulSoft.DeOldify
               this.__OutputPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
               this.__OutputBox.Controls.Add(this.__OutputPictureBox);
 
-            this.__OutputBoxContextMenuStrip = new ContextMenuStrip();
-            this.__toolStripMenuItem1 = new ToolStripMenuItem();
-            this.__toolStripMenuItem2 = new ToolStripMenuItem();
-            this.__toolStripMenuItem3 = new ToolStripMenuItem();
-            this.__toolStripMenuItem1.Text = "Copy";
-            this.__toolStripMenuItem2.Text = "Save";
-            this.__toolStripMenuItem3.Text = "Save As...";
-            this.__OutputBoxContextMenuStrip.Items.Add( this.__toolStripMenuItem1);
-            this.__OutputBoxContextMenuStrip.Items.Add( this.__toolStripMenuItem2);
-            this.__OutputBoxContextMenuStrip.Items.Add( this.__toolStripMenuItem3);
-            this.__OutputPictureBox.ContextMenuStrip =  this.__OutputBoxContextMenuStrip;
+              this.__OutputBoxContextMenuStrip = new ContextMenuStrip();
+              this.__OutputBoxMenuItem1 = new ToolStripMenuItem();
+              this.__OutputBoxMenuItem2 = new ToolStripMenuItem();
+              this.__OutputBoxMenuItem3 = new ToolStripMenuItem();
+              this.__OutputBoxMenuItem1.Text = "Copy";
+              this.__OutputBoxMenuItem2.Text = "Save";
+              this.__OutputBoxMenuItem3.Text = "Save As...";
+              this.__OutputBoxContextMenuStrip.Items.Add( this.__OutputBoxMenuItem1);
+              this.__OutputBoxContextMenuStrip.Items.Add( this.__OutputBoxMenuItem2);
+              this.__OutputBoxContextMenuStrip.Items.Add( this.__OutputBoxMenuItem3);
+              this.__OutputPictureBox.ContextMenuStrip =  this.__OutputBoxContextMenuStrip;
 
             this.__SplitContainer = new SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.__SplitContainer)).BeginInit();
@@ -888,6 +925,15 @@ namespace ColorfulSoft.DeOldify
             this.Closing += delegate
             {
                 StopColorizationThread(this, null);
+            };
+
+            this.KeyDown += (s, e) =>
+            {
+                if (e.Modifiers == Keys.Control && e.KeyCode == Keys.V)
+                    OpenImageFromClipboard();
+
+                if (e.Modifiers == Keys.Control && e.KeyCode == Keys.C)
+                    CopyImageToClipboard();
             };
 
             this.__InputLocation.KeyDown += (s, e) =>
@@ -989,19 +1035,23 @@ namespace ColorfulSoft.DeOldify
                 // this.__OutputImage.Controls.Remove(this.__ButtonSave);
             };
 
+            this.__InputBoxContextMenuStrip.ItemClicked += (object sender, ToolStripItemClickedEventArgs e) =>
+            {
+                __InputBoxContextMenuStrip.Hide(); // Workaround menu won't disappear until ItemClick event is finished.
+                if (e.ClickedItem == __InputBoxMenuItem1) {
+                    OpenImageFromClipboard();
+                }
+            };
+
             this.__OutputBoxContextMenuStrip.ItemClicked += (object sender, ToolStripItemClickedEventArgs e) =>
             {
                 __OutputBoxContextMenuStrip.Hide(); // Workaround menu won't disappear until ItemClick event is finished.
-                if (e.ClickedItem == __toolStripMenuItem1) {
-                    if (__OutputPictureBox.Image != null)
-                        Clipboard.SetDataObject((Bitmap)__OutputPictureBox.Image);
-                }
-                if (e.ClickedItem == __toolStripMenuItem2) {
+                if (e.ClickedItem == __OutputBoxMenuItem1)
+                    CopyImageToClipboard();
+                if (e.ClickedItem == __OutputBoxMenuItem2)
                     SaveImage(false);
-                }
-                if (e.ClickedItem == __toolStripMenuItem3) {
+                if (e.ClickedItem == __OutputBoxMenuItem3)
                     SaveImage(true);
-                }
             };
 
             this.__DecolorizeButton.Click += delegate
