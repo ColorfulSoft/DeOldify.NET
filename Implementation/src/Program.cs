@@ -20,19 +20,16 @@ namespace ColorfulSoft.DeOldify
         [STAThread]
         public static void Main(string[] args)
         {
+            // Reduce application CPU priority to avoid freezes during image processing
+            System.Diagnostics.Process.GetCurrentProcess().PriorityClass =
+                System.Diagnostics.ProcessPriorityClass.BelowNormal;
             DeOldify.Initialize();
             if(args.Length > 0)
             {
                 return;
             }
             Application.EnableVisualStyles();
-            try
-            {
-                Application.Run(new MainForm());
-            }
-            catch
-            {
-            }
+            Application.Run(new MainForm());
         }
 
     }
