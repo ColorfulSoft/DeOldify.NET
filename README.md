@@ -5,14 +5,12 @@ Paper "__DeOldify.NET: cross-platform application for coloring black and white p
 
 # How to run
 
-## On Windows 7, 8, 8.1, 10, 11
-* Make sure that .NET Framework 4.5+ (4.6+ for SIMD-accelerated version) or higher is installed on your computer.
+## On Windows Vista, 7, 8, 8.1, 10, 11
+* Make sure that .NET Framework 4.6 or newer is installed on your computer.
 
-* You can use any bit depth (x32 or x64), but on a 32-bit system you will not be able to process large images due to the limited amount of memory.
+* You can use any bit depth (x32 or x64), but on a 32-bit system Stable version and SIMD-acceleration are not available, also you will not be able to process large images due to the limited amount of memory.
 
 * **SIMD and Stable model are supported only in 64-bit mode. On a 32-bit machine, you should use the regular artistic version.**
-
-* At least ~~3 GB~~ **1.5 GB with new convolution algorithm** of free RAM is required to run Artistic model. About 3 GB is required for Stable model.
 
 * Select a version of DeOldify.NET the one you want to build. Versions with and without simd are available, with float32 typed weights (higher accuracy) and float16 typed weights (lower accuracy and smaller file size), with a stable model and an artistic model, as in the original DeOldify. Further actions depend on your choice.
 
