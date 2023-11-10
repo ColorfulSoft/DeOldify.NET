@@ -3,6 +3,18 @@
 
 Paper "__DeOldify.NET: cross-platform application for coloring black and white photos__" was accepted to poster session of _Neuroinformatics - 2022_ conference. The paper describes technical details of managed C# implementation of the original DeOldify and contains some comparisons with different other image colorization products.
 
+# Supported platforms
+
+DeOldify.NET is tested and officially supported in platforms, presented in table:
+
+| Configuration | CPU    | OS         | Version                  |
+|:-------------:|:------:|:----------:|:------------------------:|
+| GUI/CLI       | X86-64 | MS Windows | Vista, 7, 8, 8.1, 10, 11 |
+| GUI/CLI       | X86-64 | Mint       | 21.2                     |
+| GUI/CLI       | X86-64 | RedOS      | 7.3                      |
+| GUI/CLI       | X86-64 | Alt Linux  | 10.1                     |
+| CLI           | ARMv7  | Android    | 13                       |
+
 # How to run
 
 ## On Windows Vista, 7, 8, 8.1, 10, 11
