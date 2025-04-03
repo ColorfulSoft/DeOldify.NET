@@ -3,6 +3,17 @@
 
 Paper "__DeOldify.NET: cross-platform application for coloring black and white photos__" was accepted to poster session of _Neuroinformatics - 2022_ conference. The paper describes technical details of managed C# implementation of the original DeOldify and contains some comparisons with different other image colorization products.
 
+# Plans for version 3.0
+
+* Code refactoring and optimization
+* Removing the float32 configuration
+* A single executable file that combines artistic and stable versions of the program
+* Automatic verification of SIMD availability and the ability to use the stable version (removing special configurations for SIMD and stable)
+* The ability to configure the render factor
+* GUI improvements (additional settings, classic interface, High DPI)
+* Console interface
+* Support .NET Core/.NET
+
 # How to run
 
 ## On Windows 7, 8, 8.1, 10, 11
